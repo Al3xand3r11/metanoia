@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import { getApprovedMessages } from "@/lib/mockData";
+import background from "@/public/background.jpg";
+import Image from "next/image";
 
 export default function Messages() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +38,7 @@ export default function Messages() {
     }
   }, []);
 
-  const MessageCard = ({ content, index }: { content: string; index: number }) => (
+  const MessageCard = ({ content }: { content: string }) => (
     <div
       className="flex-shrink-0 w-[400px] md:w-[450px] lg:w-[500px] p-6 mx-4"
       style={{
@@ -71,6 +73,20 @@ export default function Messages() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src={background}
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+          style={{
+            filter: "brightness(0.8)",
+          }}
+        />
+      </div>
+
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 bg-gradient-to-b from-black via-black/80 to-transparent">
         <Link
@@ -92,37 +108,34 @@ export default function Messages() {
       {/* Scrolling Messages Grid */}
       <div
         ref={scrollContainerRef}
-        className="flex flex-col justify-center min-h-screen gap-6 py-24"
+        className="relative z-10 flex flex-col justify-center min-h-screen gap-6 py-24"
       >
         {/* Row 1 */}
-        <div className="scroll-row flex whitespace-nowrap">
+        <div className="scroll-row flex whitespace-nowrap items-stretch">
           {[...row1, ...row1].map((message, index) => (
             <MessageCard
               key={`row1-${message.id}-${index}`}
               content={message.content}
-              index={index}
             />
           ))}
         </div>
 
         {/* Row 2 */}
-        <div className="scroll-row flex whitespace-nowrap">
+        <div className="scroll-row flex whitespace-nowrap items-stretch">
           {[...row2, ...row2].map((message, index) => (
             <MessageCard
               key={`row2-${message.id}-${index}`}
               content={message.content}
-              index={index}
             />
           ))}
         </div>
 
         {/* Row 3 */}
-        <div className="scroll-row flex whitespace-nowrap">
+        <div className="scroll-row flex whitespace-nowrap items-stretch">
           {[...row3, ...row3].map((message, index) => (
             <MessageCard
               key={`row3-${message.id}-${index}`}
               content={message.content}
-              index={index}
             />
           ))}
         </div>
