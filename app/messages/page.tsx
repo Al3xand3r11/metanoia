@@ -140,7 +140,7 @@ export default function Messages() {
           className="text-white text-sm md:text-base uppercase tracking-widest"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
-          text your moment to{" "}
+          text your moment of metanoia to{" "}
           <span style={{ color: "#FF1D9D" }}>1234567890</span>
         </p>
       </div>
