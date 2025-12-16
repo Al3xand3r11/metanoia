@@ -11,10 +11,9 @@ export default function Messages() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const approvedMessages = getApprovedMessages();
 
-  // Split messages into 3 rows for the columns
-  const row1 = approvedMessages.filter((_, i) => i % 3 === 0);
-  const row2 = approvedMessages.filter((_, i) => i % 3 === 1);
-  const row3 = approvedMessages.filter((_, i) => i % 3 === 2);
+  // Split messages into 2 rows
+  const row1 = approvedMessages.filter((_, i) => i % 2 === 0);
+  const row2 = approvedMessages.filter((_, i) => i % 2 === 1);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -40,10 +39,10 @@ export default function Messages() {
 
   const MessageCard = ({ content }: { content: string }) => (
     <div
-      className="flex-shrink-0 w-[400px] md:w-[450px] lg:w-[500px] p-6 mx-4"
+      className="shrink-0 w-[500px] md:w-[600px] lg:w-[700px] p-8 md:p-10 mx-5"
       style={{
         background: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
-        borderRadius: "20px",
+        borderRadius: "24px",
         boxShadow: `
           0 4px 6px rgba(0, 0, 0, 0.4),
           0 10px 20px rgba(0, 0, 0, 0.3),
@@ -54,15 +53,15 @@ export default function Messages() {
       }}
     >
       <blockquote
-        className="text-white text-lg md:text-xl lg:text-2xl font-light leading-relaxed"
+        className="text-white text-xl md:text-2xl lg:text-3xl font-light leading-relaxed whitespace-normal"
         style={{ fontFamily: "var(--font-helvetica-neue)" }}
       >
         &ldquo;{content}&rdquo;
       </blockquote>
-      <div className="mt-4 flex items-center gap-2">
-        <div className="w-8 h-[1px] bg-gradient-to-r from-white/40 to-transparent" />
+      <div className="mt-6 flex items-center gap-2">
+        <div className="w-10 h-px bg-linear-to-r from-white/40 to-transparent" />
         <span
-          className="text-white/30 text-xs uppercase tracking-widest"
+          className="text-white/30 text-sm uppercase tracking-widest"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           Metanoia Moment
@@ -108,7 +107,7 @@ export default function Messages() {
       {/* Scrolling Messages Grid */}
       <div
         ref={scrollContainerRef}
-        className="relative z-10 flex flex-col justify-center min-h-screen gap-6 py-24"
+        className="relative z-10 flex flex-col justify-center min-h-screen gap-8 py-24"
       >
         {/* Row 1 */}
         <div className="scroll-row flex whitespace-nowrap items-stretch">
@@ -125,16 +124,6 @@ export default function Messages() {
           {[...row2, ...row2].map((message, index) => (
             <MessageCard
               key={`row2-${message.id}-${index}`}
-              content={message.content}
-            />
-          ))}
-        </div>
-
-        {/* Row 3 */}
-        <div className="scroll-row flex whitespace-nowrap items-stretch">
-          {[...row3, ...row3].map((message, index) => (
-            <MessageCard
-              key={`row3-${message.id}-${index}`}
               content={message.content}
             />
           ))}
