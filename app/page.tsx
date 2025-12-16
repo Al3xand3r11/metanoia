@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import Mia2 from "@/public/Mia2.webp";
+import Mia from "@/public/Mia.webp";
 import CleoLogo from "@/public/CleoLogo.png";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
@@ -55,7 +55,7 @@ export default function Home() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={Mia2}
+          src={Mia}
           alt="Metanoia Moments"
           fill
           className="object-cover"
@@ -81,14 +81,6 @@ export default function Home() {
               className="h-auto w-16 md:w-20"
             />
           </div>
-
-          {/* Center Text */}
-          <p
-            className="hidden text-center text-sm font-medium uppercase tracking-[0.3em] text-white md:block"
-            style={{ fontFamily: "var(--font-saira)" }}
-          >
-            THIS IS JUST TEST WORDING FOR THE TOP
-          </p>
 
           {/* Social Icons - Right */}
           <div className="flex items-center gap-4 md:gap-6">
@@ -133,7 +125,7 @@ export default function Home() {
           >
             {/* "Enter" text that appears on hover */}
             <span
-              className={`absolute left-1/2 -translate-x-1/2 text-xl font-medium uppercase tracking-widest text-white transition-all duration-300 md:text-3xl lg:text-4xl ${
+              className={`absolute left-1/2 -translate-x-1/2 text-xl font-medium uppercase tracking-widest text-hot-pink transition-all duration-300 md:text-3xl lg:text-4xl ${
                 isHovered
                   ? "translate-y-0 opacity-100"
                   : "translate-y-4 opacity-0"
@@ -141,7 +133,6 @@ export default function Home() {
               style={{ 
                 fontFamily: "var(--font-saira)",
                 top: "-3vw",
-                color: "#FF1D9D",
               }}
             >
               Enter

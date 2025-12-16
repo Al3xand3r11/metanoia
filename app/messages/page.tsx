@@ -53,7 +53,7 @@ export default function Messages() {
     >
       <blockquote
         className="text-white text-lg md:text-xl lg:text-2xl font-light leading-relaxed"
-        style={{ fontFamily: "var(--font-saira)" }}
+        style={{ fontFamily: "var(--font-helvetica-neue)" }}
       >
         &ldquo;{content}&rdquo;
       </blockquote>
@@ -61,7 +61,7 @@ export default function Messages() {
         <div className="w-8 h-[1px] bg-gradient-to-r from-white/40 to-transparent" />
         <span
           className="text-white/30 text-xs uppercase tracking-widest"
-          style={{ fontFamily: "var(--font-saira)" }}
+          style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           Metanoia Moment
         </span>
@@ -76,13 +76,13 @@ export default function Messages() {
         <Link
           href="/"
           className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-widest"
-          style={{ fontFamily: "var(--font-saira)" }}
+          style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           ← Back
         </Link>
         <h1
           className="text-white text-xl uppercase tracking-[0.3em] font-light"
-          style={{ fontFamily: "var(--font-saira)" }}
+          style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           Moments
         </h1>
@@ -136,7 +136,7 @@ export default function Messages() {
       <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center px-8 py-6 bg-gradient-to-t from-black via-black/80 to-transparent">
         <p
           className="text-white text-sm md:text-base uppercase tracking-widest"
-          style={{ fontFamily: "var(--font-saira)" }}
+          style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           text your moment to{" "}
           <span style={{ color: "#FF1D9D" }}>1234567890</span>
