@@ -6,7 +6,10 @@ import CleoLogo from "@/public/CleoLogo.png";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
-import background from "@/public/Mia.webp";
+import Mia from "@/public/Mia.webp";
+import Mia2 from "@/public/Mia2.webp";
+import CleoDark from "@/public/CleoDark.webp";
+import Cleo3 from "@/public/Mia3.webp";
 
 export default function Home() {
   const metanoiaRef = useRef<HTMLHeadingElement>(null);
@@ -50,15 +53,63 @@ export default function Home() {
     "(meh-tuh-NOY-uh): a deep shift in your mind, heart, and spirit — a turning point back to your light.";
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#e0e8e8]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
       {/* Regular Background*/}
+      {/* SVG Duotone Filter */}
+      <svg className="absolute h-0 w-0" aria-hidden="true">
+        <defs>
+          <filter id="duotone">
+            {/* Convert to grayscale */}
+            <feColorMatrix
+              type="matrix"
+              values="0.33 0.33 0.33 0 0
+                      0.33 0.33 0.33 0 0
+                      0.33 0.33 0.33 0 0
+                      0    0    0    1 0"
+            />
+            {/* Map grayscale to duotone colors */}
+            {/* Shadow: #344259 (Darker Steel Blue) → Highlight: #FF1D9D (Hot Pink) */}
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues="0.204 1.0" />
+              <feFuncG type="table" tableValues="0.259 0.114" />
+              <feFuncB type="table" tableValues="0.349 0.616" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Background Image with Duotone Effect */}
       <div className="absolute inset-0">
         <Image
-          src={background}
-          alt="Background"
+          src={CleoDark}
+          alt="Metanoia Moments"
           fill
           className="object-cover"
           priority
+          style={{
+            filter: "url(#duotone) contrast(1.1)",
+          }}
+        />
+        {/* Halftone/Scanline Texture Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              0deg,
+              transparent,
+              transparent 2px,
+              rgba(0, 0, 0, 0.4) 2px,
+              rgba(0, 0, 0, 0.4) 4px
+            )`,
+            backgroundSize: "100% 4px",
+          }}
+        />
+        {/* Subtle noise texture for extra grit */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-10"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
         />
       </div>
 
@@ -74,7 +125,6 @@ export default function Home() {
               width={120}
               height={60}
               className="h-auto w-24 md:w-32 lg:w-36"
-              style={{ filter: "brightness(0.3)" }}
             />
           </div>
 
@@ -82,28 +132,28 @@ export default function Home() {
           <div className="flex items-center gap-5 md:gap-8">
             <a
               href="#"
-              className="text-midnight transition-opacity hover:opacity-60"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="YouTube"
             >
               <FaYoutube className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
             </a>
             <a
               href="#"
-              className="text-midnight transition-opacity hover:opacity-60"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="Spotify"
             >
               <FaSpotify className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
             </a>
             <a
               href="#"
-              className="text-midnight transition-opacity hover:opacity-60"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="Instagram"
             >
               <FaInstagram className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
             </a>
             <a
               href="#"
-              className="text-midnight transition-opacity hover:opacity-60"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="TikTok"
             >
               <FaTiktok className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
@@ -111,8 +161,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Main Content - METANOIA */}
-        <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end">
+        {/* Main Content - METANOIA (Centered) */}
+        <div className="flex flex-1 flex-col items-center justify-center">
           <Link
             href="/messages"
             className="group inline-block cursor-pointer text-center"
@@ -120,10 +170,10 @@ export default function Home() {
             {/* METANOIA text */}
             <h1
               ref={metanoiaRef}
-              className="font-black uppercase leading-[0.85] text-white transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+              className="font-black uppercase leading-[0.85] text-[#F5F7FA] transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
               style={{
                 fontFamily: "var(--font-saira-condensed)",
-                fontSize: "clamp(4rem, 28vw, 25rem)",
+                fontSize: "clamp(3rem, 12vw, 12rem)",
                 textShadow: "0 4px 30px rgba(0, 0, 0, 0.4)",
                 letterSpacing: "-0.02em",
               }}
@@ -132,20 +182,20 @@ export default function Home() {
             </h1>
           </Link>
 
-          {/* Scrolling Marquee Text - overlaps METANOIA */}
+          {/* Definition Text - below METANOIA */}
           <div 
             className="w-full overflow-hidden"
-            style={{ marginTop: "-8vw" }}
+            style={{ marginTop: "-2vw" }}
           >
-            <div ref={marqueeRef} className="flex whitespace-nowrap">
+            <div ref={marqueeRef} className="flex whitespace-nowrap justify-center">
               {/* Duplicate content for seamless loop */}
               {[...Array(4)].map((_, i) => (
                 <span
                   key={i}
-                  className="mx-8 font-black uppercase leading-none text-black"
+                  className="mx-4 font-black uppercase leading-none text-[#111827]"
                   style={{ 
                     fontFamily: "var(--font-saira-condensed)",
-                    fontSize: "clamp(3rem, 16.8vw, 20rem)",
+                    fontSize: "clamp(1rem, 3vw, 3rem)",
                     letterSpacing: "-0.02em",
                   }}
                 >
