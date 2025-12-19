@@ -4,8 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import { getApprovedMessages } from "@/lib/mockData";
-import background from "@/public/background.jpg";
-import Image from "next/image";
+import RippleEffect from "@/app/components/RippleEffect";
 
 export default function Messages() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -39,10 +38,10 @@ export default function Messages() {
 
   const MessageCard = ({ content }: { content: string }) => (
     <div
-      className="shrink-0 w-[500px] md:w-[600px] lg:w-[700px] p-8 md:p-10 mx-5"
+      className="shrink-0 w-[600px] md:w-[750px] lg:w-[900px] p-8 md:p-12 mx-6"
       style={{
         background: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
-        borderRadius: "24px",
+        borderRadius: "28px",
         boxShadow: `
           0 4px 6px rgba(0, 0, 0, 0.4),
           0 10px 20px rgba(0, 0, 0, 0.3),
@@ -53,10 +52,11 @@ export default function Messages() {
       }}
     >
       <blockquote
-        className="text-white text-xl md:text-2xl lg:text-3xl font-light leading-relaxed whitespace-normal"
+        className="text-white text-base md:text-lg lg:text-xl font-light leading-relaxed whitespace-normal"
         style={{ fontFamily: "var(--font-helvetica-neue)" }}
       >
         &ldquo;{content}&rdquo;
+        <span className="text-white/40 text-sm ml-2">({content.length})</span>
       </blockquote>
       <div className="mt-6 flex items-center gap-2">
         <div className="w-10 h-px bg-linear-to-r from-white/40 to-transparent" />
@@ -72,19 +72,8 @@ export default function Messages() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src={background}
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-          style={{
-            filter: "brightness(0.8)",
-          }}
-        />
-      </div>
+      {/* Ripple Effect */}
+      <RippleEffect />
 
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 bg-gradient-to-b from-black via-black/80 to-transparent">

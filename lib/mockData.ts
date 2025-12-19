@@ -1,11 +1,32 @@
 import { Message } from "./types";
 
-// Mock data with 20 messages - matches the database structure
+// Messages with specific character lengths: 500, 356, and 240
+// Each message includes meaningful content at the specified length
+
+const message500a = "The moment I realized my worth wasn't tied to their approval was the day everything changed. For years, I had been seeking validation from people who couldn't even see their own light, let alone appreciate mine. I bent myself into shapes that didn't fit, spoke words that weren't mine, and smiled when my soul was crying. But one morning, I woke up and understood that the only approval I ever needed was my own. That realization didn't come easy—it came after countless nights of tears and self-doubt.";
+
+const message500b = "Walking away from what no longer served my soul was the hardest decision I ever made, but also the most liberating. I had invested years into relationships, careers, and dreams that looked perfect on paper but felt hollow inside. Everyone told me I was crazy to leave, that I was throwing away everything I had built. But they couldn't feel the emptiness that had taken residence in my chest. They couldn't hear the quiet voice inside me begging for something more authentic, more aligned with who I was becoming.";
+
+const message500c = "My metanoia began in the most unexpected place—a hospital waiting room at 3 AM, surrounded by strangers yet feeling completely alone. That night, I made a promise to myself that I would never again prioritize anyone else's comfort over my own well-being. It took hitting rock bottom to understand that I had been living someone else's life, following a script written by expectations and fear. From that moment forward, I chose to write my own story, even if the pages were messy and uncertain.";
+
+const message356a = "Choosing peace over being right was my turning point. I spent so much energy defending my position, proving my worth, fighting battles that left me exhausted and empty. Then one day, I simply stopped. I let go of the need to be understood by everyone. The silence that followed wasn't defeat—it was freedom. It was the sound of my own breath, my own heartbeat, finally loud enough to hear.";
+
+const message356b = "The day I stopped apologizing for taking up space was the day I started living. I had made myself small for so long, shrinking to fit into rooms that were never meant for me. Now I stand tall, speak loudly, and take up every inch of space I deserve. My existence is not an inconvenience—it is a gift, and I finally believe that with my whole heart.";
+
+const message356c = "Forgiving myself was harder than forgiving anyone else. I held onto my mistakes like they defined me, replaying every wrong turn, every harsh word, every moment of weakness. But healing required me to extend the same grace to myself that I so freely gave others. I am human. I am flawed. And I am still worthy of love and second chances.";
+
+const message240a = "The quiet moments taught me more than the chaos ever did. In stillness, I found clarity. In solitude, I found strength. The noise of the world had drowned out my inner voice for too long. Now I protect my peace like the precious gift it is.";
+
+const message240b = "Letting go of who I thought I should be to become who I am—that was my metanoia. The expectations, the timelines, the comparisons—I released them all. What remained was raw, authentic, and finally free.";
+
+const message240c = "Breaking the cycle. For me. For my children. For our future. I refused to pass down the pain that was passed to me. The chain of hurt ends here, with courage, with intention, with love that heals instead of harms.";
+
+// Mock data with mixed character lengths in random order
 export const mockMessages: Message[] = [
   {
     id: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
     phone_hash: "a1b2c3d4e5f6",
-    content: "The moment I realized my worth wasn't tied to their approval.",
+    content: message240a,
     status: "approved",
     created_at: "2024-12-01T10:30:00Z",
     approved_at: "2024-12-01T11:00:00Z",
@@ -13,7 +34,7 @@ export const mockMessages: Message[] = [
   {
     id: "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
     phone_hash: "b2c3d4e5f6a7",
-    content: "Walking away from what no longer served my soul.",
+    content: message500a,
     status: "approved",
     created_at: "2024-12-02T14:15:00Z",
     approved_at: "2024-12-02T15:00:00Z",
@@ -21,7 +42,7 @@ export const mockMessages: Message[] = [
   {
     id: "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
     phone_hash: "c3d4e5f6a7b8",
-    content: "Choosing peace over being right. That was my turning point.",
+    content: message356a,
     status: "approved",
     created_at: "2024-12-03T09:45:00Z",
     approved_at: "2024-12-03T10:30:00Z",
@@ -29,15 +50,15 @@ export const mockMessages: Message[] = [
   {
     id: "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
     phone_hash: "d4e5f6a7b8c9",
-    content: "Learning to love myself after years of self-doubt.",
-    status: "pending",
+    content: message500b,
+    status: "approved",
     created_at: "2024-12-04T16:20:00Z",
-    approved_at: null,
+    approved_at: "2024-12-04T17:00:00Z",
   },
   {
     id: "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
     phone_hash: "e5f6a7b8c9d0",
-    content: "The day I stopped apologizing for taking up space.",
+    content: message240b,
     status: "approved",
     created_at: "2024-12-05T11:00:00Z",
     approved_at: "2024-12-05T12:00:00Z",
@@ -45,7 +66,7 @@ export const mockMessages: Message[] = [
   {
     id: "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
     phone_hash: "f6a7b8c9d0e1",
-    content: "Forgiving myself was harder than forgiving anyone else.",
+    content: message356b,
     status: "approved",
     created_at: "2024-12-06T08:30:00Z",
     approved_at: "2024-12-06T09:15:00Z",
@@ -53,15 +74,15 @@ export const mockMessages: Message[] = [
   {
     id: "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
     phone_hash: "a7b8c9d0e1f2",
-    content: "Finding strength in vulnerability. My metanoia began there.",
-    status: "hidden",
+    content: message500c,
+    status: "approved",
     created_at: "2024-12-07T13:45:00Z",
-    approved_at: null,
+    approved_at: "2024-12-07T14:30:00Z",
   },
   {
     id: "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
     phone_hash: "b8c9d0e1f2a3",
-    content: "The quiet moments taught me more than the chaos ever did.",
+    content: message240c,
     status: "approved",
     created_at: "2024-12-08T17:00:00Z",
     approved_at: "2024-12-08T18:00:00Z",
@@ -69,98 +90,10 @@ export const mockMessages: Message[] = [
   {
     id: "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
     phone_hash: "c9d0e1f2a3b4",
-    content: "Letting go of who I thought I should be to become who I am.",
+    content: message356c,
     status: "approved",
     created_at: "2024-12-09T10:15:00Z",
     approved_at: "2024-12-09T11:00:00Z",
-  },
-  {
-    id: "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
-    phone_hash: "d0e1f2a3b4c5",
-    content: "My metanoia: realizing home was never a place, but a feeling.",
-    status: "pending",
-    created_at: "2024-12-10T14:30:00Z",
-    approved_at: null,
-  },
-  {
-    id: "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
-    phone_hash: "e1f2a3b4c5d6",
-    content: "Breaking the cycle. For me. For my children. For our future.",
-    status: "approved",
-    created_at: "2024-12-11T09:00:00Z",
-    approved_at: "2024-12-11T09:45:00Z",
-  },
-  {
-    id: "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c",
-    phone_hash: "f2a3b4c5d6e7",
-    content: "The moment I chose myself wasn't selfish—it was survival.",
-    status: "approved",
-    created_at: "2024-12-12T15:45:00Z",
-    approved_at: "2024-12-12T16:30:00Z",
-  },
-  {
-    id: "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d",
-    phone_hash: "a3b4c5d6e7f8",
-    content: "Healing isn't linear, but every step forward counts.",
-    status: "approved",
-    created_at: "2024-12-13T11:30:00Z",
-    approved_at: "2024-12-13T12:15:00Z",
-  },
-  {
-    id: "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
-    phone_hash: "b4c5d6e7f8a9",
-    content: "I found my light in the darkness. That was my metanoia.",
-    status: "hidden",
-    created_at: "2024-12-14T08:00:00Z",
-    approved_at: null,
-  },
-  {
-    id: "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
-    phone_hash: "c5d6e7f8a9b0",
-    content: "The day I realized I was worthy of the love I kept giving away.",
-    status: "approved",
-    created_at: "2024-12-15T12:00:00Z",
-    approved_at: "2024-12-15T13:00:00Z",
-  },
-  {
-    id: "6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a",
-    phone_hash: "d6e7f8a9b0c1",
-    content: "Setting boundaries changed everything. I wish I'd done it sooner.",
-    status: "approved",
-    created_at: "2024-12-16T16:30:00Z",
-    approved_at: "2024-12-16T17:15:00Z",
-  },
-  {
-    id: "7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b",
-    phone_hash: "e7f8a9b0c1d2",
-    content: "My turning point was accepting help. Strength isn't always solo.",
-    status: "pending",
-    created_at: "2024-12-17T10:45:00Z",
-    approved_at: null,
-  },
-  {
-    id: "8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c",
-    phone_hash: "f8a9b0c1d2e3",
-    content: "Dancing in my kitchen at 2am. That's when I knew I was free.",
-    status: "approved",
-    created_at: "2024-12-18T14:00:00Z",
-    approved_at: "2024-12-18T14:45:00Z",
-  },
-  {
-    id: "9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
-    phone_hash: "a9b0c1d2e3f4",
-    content: "The universe kept sending me signs. I finally listened.",
-    status: "approved",
-    created_at: "2024-12-19T09:30:00Z",
-    approved_at: "2024-12-19T10:15:00Z",
-  },
-  {
-    id: "0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e",
-    phone_hash: "b0c1d2e3f4a5",
-    content: "My metanoia: learning that 'no' is a complete sentence.",
-    status: "approved",
-    created_at: "2024-12-20T17:00:00Z",
-    approved_at: "2024-12-20T17:45:00Z",
   },
 ];
 
@@ -173,4 +106,3 @@ export function getApprovedMessages(): Message[] {
 export function getAllMessages(): Message[] {
   return mockMessages;
 }
-
