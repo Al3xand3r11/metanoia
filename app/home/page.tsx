@@ -3,17 +3,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import CleoLogo from "@/public/CleoLogo.png";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
-import Mia from "@/public/Mia.webp";
-import Mia2 from "@/public/Mia2.webp";
 import CleoDark from "@/public/CleoDark.webp";
 import Cleo3 from "@/public/Mia3.webp";
 
 export default function Home() {
   const metanoiaRef = useRef<HTMLHeadingElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
+  const [activeImage, setActiveImage] = useState(0); // 0 = CleoDark, 1 = Cleo3
+
+  // Switch images every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveImage((prev) => (prev === 0 ? 1 : 0));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (metanoiaRef.current) {
@@ -34,32 +42,16 @@ export default function Home() {
     }
   }, []);
 
-  // Marquee animation for the scrolling text - COMMENTED OUT FOR PERFORMANCE
-  // useEffect(() => {
-  //   if (marqueeRef.current) {
-  //     const marqueeContent = marqueeRef.current;
-  //     const contentWidth = marqueeContent.scrollWidth / 2;
-
-  //     gsap.to(marqueeContent, {
-  //       x: -contentWidth,
-  //       duration: 120,
-  //       ease: "none",
-  //       repeat: -1,
-  //     });
-  //   }
-  // }, []);
-
   const marqueeText =
     "(meh-tuh-NOY-uh): a deep shift in your mind, heart, and spirit — a turning point back to your light.";
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
-      {/* Regular Background*/}
-      {/* SVG Duotone Filter */}
+      {/* SVG Duotone Filters */}
       <svg className="absolute h-0 w-0" aria-hidden="true">
         <defs>
-          <filter id="duotone">
-            {/* Convert to grayscale */}
+          {/* Duotone Filter 1: For CleoDark - #344259 → #FF1D9D */}
+          <filter id="duotone1">
             <feColorMatrix
               type="matrix"
               values="0.33 0.33 0.33 0 0
@@ -67,29 +59,67 @@ export default function Home() {
                       0.33 0.33 0.33 0 0
                       0    0    0    1 0"
             />
-            {/* Map grayscale to duotone colors */}
-            {/* Shadow: #344259 (Darker Steel Blue) → Highlight: #FF1D9D (Hot Pink) */}
             <feComponentTransfer>
               <feFuncR type="table" tableValues="0.204 1.0" />
               <feFuncG type="table" tableValues="0.259 0.114" />
               <feFuncB type="table" tableValues="0.349 0.616" />
             </feComponentTransfer>
           </filter>
+
+          {/* Duotone Filter 2: For Cleo3 - #495b80 → #FF1D9D */}
+          <filter id="duotone2">
+            <feColorMatrix
+              type="matrix"
+              values="0.33 0.33 0.33 0 0
+                      0.33 0.33 0.33 0 0
+                      0.33 0.33 0.33 0 0
+                      0    0    0    1 0"
+            />
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues="0.286 1.0" />
+              <feFuncG type="table" tableValues="0.357 0.114" />
+              <feFuncB type="table" tableValues="0.502 0.616" />
+            </feComponentTransfer>
+          </filter>
         </defs>
       </svg>
 
-      {/* Background Image with Duotone Effect */}
+      {/* Background Images with Crossfade */}
       <div className="absolute inset-0">
-        <Image
-          src={CleoDark}
-          alt="Metanoia Moments"
-          fill
-          className="object-cover"
-          priority
-          style={{
-            filter: "url(#duotone) contrast(1.1)",
-          }}
-        />
+        {/* Image 1: CleoDark */}
+        <div
+          className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+          style={{ opacity: activeImage === 0 ? 1 : 0 }}
+        >
+          <Image
+            src={CleoDark}
+            alt="Metanoia Moments"
+            fill
+            className="object-cover"
+            priority
+            style={{
+              filter: "url(#duotone1) contrast(1.1)",
+            }}
+          />
+        </div>
+
+        {/* Image 2: Cleo3 */}
+        <div
+          className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+          style={{ opacity: activeImage === 1 ? 1 : 0 }}
+        >
+          <Image
+            src={Cleo3}
+            alt="Metanoia Moments"
+            fill
+            className="object-cover"
+            priority
+            style={{
+              filter: "url(#duotone2) contrast(1.1)",
+            }}
+          />
+        </div>
+
         {/* Halftone/Scanline Texture Overlay */}
         <div
           className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
@@ -209,4 +239,3 @@ export default function Home() {
     </div>
   );
 }
-
