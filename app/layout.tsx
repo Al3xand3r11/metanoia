@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Saira_Condensed, Saira } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AudioProvider } from "./context/AudioContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -121,7 +122,7 @@ export default function RootLayout({
       <body
         className={`${sairaCondensed.variable} ${saira.variable} ${helveticaNeue.variable} antialiased`}
       >
-        {children}
+        <AudioProvider>{children}</AudioProvider>
       </body>
     </html>
   );

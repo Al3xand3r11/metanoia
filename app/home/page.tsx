@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
 import CleoDark from "@/public/CleoDark.webp";
 import Cleo3 from "@/public/Mia3.webp";
+import { useAudio } from "@/app/context/AudioContext";
+import TrailRevealEffect from "@/app/components/TrailRevealEffect";
 
 // Video files for mobile background
 const mobileVideos = [
@@ -24,6 +26,12 @@ export default function Home() {
   const [activeVideo, setActiveVideo] = useState(0);
   const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { play } = useAudio();
+
+  // Handle METANOIA click - play music and navigate
+  const handleMetanoiaClick = () => {
+    play();
+  };
 
   // Detect mobile screen size
   useEffect(() => {
@@ -140,6 +148,7 @@ export default function Home() {
             <Link
               href="/messages"
               className="group inline-block cursor-pointer text-center"
+              onClick={handleMetanoiaClick}
             >
               <span
                 className="font-black uppercase text-[#F5F7FA] transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
@@ -174,6 +183,9 @@ export default function Home() {
   // Desktop Layout (existing)
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
+      {/* Trail Reveal Effect - CLEO+ follows cursor on fast movement */}
+      <TrailRevealEffect />
+      
       {/* SVG Duotone Filters */}
       <svg className="absolute h-0 w-0" aria-hidden="true">
         <defs>
@@ -323,6 +335,7 @@ export default function Home() {
           <Link
             href="/messages"
             className="group inline-block cursor-pointer text-center"
+            onClick={handleMetanoiaClick}
           >
             {/* METANOIA text */}
             <h1
