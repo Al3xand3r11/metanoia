@@ -2,14 +2,111 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Message } from "@/lib/types";
 import { mockMessages } from "@/lib/mockData";
-import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock } from "react-icons/fi";
+
+const DASHBOARD_PASSWORD = "t3st";
+
+function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === DASHBOARD_PASSWORD) {
+      onSuccess();
+    } else {
+      setError(true);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
+      setPassword("");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
+      {/* Subtle radial gradient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black" />
+      
+      <div className="relative z-10 w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center">
+          {/* Logo */}
+          <div className="mb-12">
+            <Image
+              src="/CleoLogo.png"
+              alt="Cleo+"
+              width={140}
+              height={50}
+              className="brightness-0 invert opacity-90"
+              priority
+            />
+          </div>
+
+          {/* Password Input Container */}
+          <div className={`w-full ${isShaking ? "animate-shake" : ""}`}>
+            <div className="relative">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError(false);
+                }}
+                placeholder="Enter password"
+                className={`w-full bg-zinc-900/60 backdrop-blur-sm border ${
+                  error ? "border-red-500/50" : "border-zinc-800"
+                } rounded-xl px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all text-center tracking-widest`}
+                style={{ fontFamily: "var(--font-saira)" }}
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-zinc-500 hover:text-white transition-colors"
+              >
+                <FiLock className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {/* Error message */}
+            <div className={`mt-4 text-center transition-opacity duration-200 ${error ? "opacity-100" : "opacity-0"}`}>
+              <span className="text-red-400/80 text-sm" style={{ fontFamily: "var(--font-saira)" }}>
+                Incorrect password
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {/* CSS for shake animation */}
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+          20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
+    </div>
+  );
+}
 
 export default function Dashboard() {
+  // Password protection state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   // Use state to manage messages (simulating database updates)
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("all");
+
+  // Show password gate if not authenticated
+  if (!isAuthenticated) {
+    return <PasswordGate onSuccess={() => setIsAuthenticated(true)} />;
+  }
 
   // Toggle message visibility
   const toggleVisibility = (id: string) => {
