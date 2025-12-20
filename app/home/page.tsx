@@ -9,22 +9,60 @@ import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
 import CleoDark from "@/public/CleoDark.webp";
 import Cleo3 from "@/public/Mia3.webp";
 
+// Video files for mobile background
+const mobileVideos = [
+  "/beach.mov",
+  "/eyes.mov",
+  "/laying.mov",
+  "/outside.mov",
+  "/water.mov",
+];
+
 export default function Home() {
   const metanoiaRef = useRef<HTMLHeadingElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState(0); // 0 = CleoDark, 1 = Cleo3
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeVideo, setActiveVideo] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Switch images every 5 seconds
+  // Detect mobile screen size
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Handle video ended - cycle to next video
+  const handleVideoEnded = () => {
+    setActiveVideo((prev) => (prev + 1) % mobileVideos.length);
+  };
+
+  // Reset video when activeVideo changes
+  useEffect(() => {
+    if (videoRef.current && isMobile) {
+      videoRef.current.load();
+      videoRef.current.play();
+    }
+  }, [activeVideo, isMobile]);
+
+  // Switch images every 5 seconds (desktop only)
+  useEffect(() => {
+    if (isMobile) return;
+    
     const interval = setInterval(() => {
       setActiveImage((prev) => (prev === 0 ? 1 : 0));
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
-    if (metanoiaRef.current) {
+    if (metanoiaRef.current && !isMobile) {
       // Initial state - positioned off screen to the right
       gsap.set(metanoiaRef.current, {
         x: 200,
@@ -40,11 +78,119 @@ export default function Home() {
         delay: 0.3,
       });
     }
-  }, []);
+  }, [isMobile]);
 
   const marqueeText =
     "(meh-tuh-NOY-uh): a deep shift in your mind, heart, and spirit — a turning point back to your light.";
 
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="relative flex min-h-screen flex-col overflow-hidden bg-black">
+        {/* Video Background */}
+        <div className="absolute inset-0">
+          <video
+            ref={videoRef}
+            key={activeVideo}
+            className="absolute inset-0 h-full w-full object-cover"
+            autoPlay
+            muted
+            playsInline
+            onEnded={handleVideoEnded}
+          >
+            <source src={mobileVideos[activeVideo]} type="video/quicktime" />
+          </video>
+          
+          {/* Dark overlay for better text visibility */}
+          <div className="absolute inset-0 bg-black/30" />
+          
+          {/* Halftone/Scanline Texture Overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-20"
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.4) 2px,
+                rgba(0, 0, 0, 0.4) 4px
+              )`,
+              backgroundSize: "100% 4px",
+            }}
+          />
+        </div>
+
+        {/* Content Container */}
+        <div className="relative z-10 flex min-h-screen w-full flex-col">
+          {/* Social Icons - Top Center */}
+          <div className="flex items-center justify-center gap-6 px-6 py-8">
+            <a
+              href="#"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
+              aria-label="YouTube"
+            >
+              <FaYoutube className="h-8 w-8" />
+            </a>
+            <a
+              href="#"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
+              aria-label="Spotify"
+            >
+              <FaSpotify className="h-8 w-8" />
+            </a>
+            <a
+              href="#"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
+              aria-label="Instagram"
+            >
+              <FaInstagram className="h-8 w-8" />
+            </a>
+            <a
+              href="#"
+              className="text-[#F5F7FA] transition-opacity hover:opacity-60"
+              aria-label="TikTok"
+            >
+              <FaTiktok className="h-8 w-8" />
+            </a>
+          </div>
+
+          {/* Enter Button - Centered */}
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <Link
+              href="/messages"
+              className="group inline-block cursor-pointer text-center"
+            >
+              <span
+                className="font-black uppercase text-[#F5F7FA] transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+                style={{
+                  fontFamily: "var(--font-saira-condensed)",
+                  fontSize: "2.5rem",
+                  textShadow: "0 4px 30px rgba(0, 0, 0, 0.6)",
+                  letterSpacing: "0.2em",
+                }}
+              >
+                ENTER
+              </span>
+            </Link>
+          </div>
+
+          {/* Video progress indicator */}
+          <div className="flex justify-center gap-2 pb-8">
+            {mobileVideos.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1 w-8 rounded-full transition-all duration-300 ${
+                  index === activeVideo ? "bg-white" : "bg-white/30"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop Layout (existing)
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
       {/* SVG Duotone Filters */}
