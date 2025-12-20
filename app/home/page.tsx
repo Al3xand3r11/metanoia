@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import CleoLogo from "@/public/CleoLogo.png";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
 import CleoDark from "@/public/CleoDark.webp";
 import Cleo3 from "@/public/Mia3.webp";
@@ -19,11 +18,11 @@ const mobileVideos = [
 ];
 
 export default function Home() {
-  const metanoiaRef = useRef<HTMLHeadingElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState(0); // 0 = CleoDark, 1 = Cleo3
   const [isMobile, setIsMobile] = useState(false);
   const [activeVideo, setActiveVideo] = useState(0);
+  const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Detect mobile screen size
@@ -61,24 +60,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isMobile]);
 
-  useEffect(() => {
-    if (metanoiaRef.current && !isMobile) {
-      // Initial state - positioned off screen to the right
-      gsap.set(metanoiaRef.current, {
-        x: 200,
-        opacity: 0,
-      });
-
-      // Animate in
-      gsap.to(metanoiaRef.current, {
-        x: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.3,
-      });
-    }
-  }, [isMobile]);
 
   const marqueeText =
     "(meh-tuh-NOY-uh): a deep shift in your mind, heart, and spirit — a turning point back to your light.";
@@ -345,14 +326,17 @@ export default function Home() {
           >
             {/* METANOIA text */}
             <h1
-              ref={metanoiaRef}
-              className="font-black uppercase leading-[0.85] text-[#F5F7FA] transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+              className="font-black uppercase leading-[0.85] text-[#F5F7FA] transition-all duration-300"
               style={{
                 fontFamily: "var(--font-saira-condensed)",
                 fontSize: "clamp(3rem, 12vw, 12rem)",
-                textShadow: "0 4px 30px rgba(0, 0, 0, 0.4)",
+                textShadow: isMetanoiaHovered 
+                  ? "0 0 20px #fff, 0 0 40px #fff, 0 0 80px #fff, 0 0 120px rgba(255,255,255,0.8), 0 0 200px rgba(255,255,255,0.6)"
+                  : "0 4px 30px rgba(0, 0, 0, 0.4)",
                 letterSpacing: "-0.02em",
               }}
+              onMouseEnter={() => setIsMetanoiaHovered(true)}
+              onMouseLeave={() => setIsMetanoiaHovered(false)}
             >
               METANOIA
             </h1>
