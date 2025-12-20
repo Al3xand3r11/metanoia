@@ -88,7 +88,7 @@ export default function Messages() {
           className="text-white text-xl uppercase tracking-[0.3em] font-light"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
-          Moments
+          Moments of Metanoia
         </h1>
         <div className="w-16" /> {/* Spacer for centering */}
       </div>
@@ -130,7 +130,7 @@ export default function Messages() {
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           text your moment of metanoia to{" "}
-          <span style={{ color: "#FF1D9D" }}>1234567890</span>
+          <span style={{ color: "#FF1D9D" }}>8448716554</span>
         </p>
       </div>
     </div>
