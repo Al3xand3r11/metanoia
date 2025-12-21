@@ -5,7 +5,6 @@ import Link from "next/link";
 import CleoLogo from "@/public/CleoLogo.png";
 import { useEffect, useRef, useState } from "react";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
-import CleoDark from "@/public/CleoDark.webp";
 import Cleo3 from "@/public/Mia3.webp";
 import { useAudio } from "@/app/context/AudioContext";
 import TrailRevealEffect from "@/app/components/TrailRevealEffect";
@@ -21,7 +20,6 @@ const mobileVideos = [
 
 export default function Home() {
   const marqueeRef = useRef<HTMLDivElement>(null);
-  const [activeImage, setActiveImage] = useState(0); // 0 = CleoDark, 1 = Cleo3
   const [isMobile, setIsMobile] = useState(false);
   const [activeVideo, setActiveVideo] = useState(0);
   const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
@@ -56,18 +54,6 @@ export default function Home() {
       videoRef.current.play();
     }
   }, [activeVideo, isMobile]);
-
-  // Switch images every 5 seconds (desktop only)
-  useEffect(() => {
-    if (isMobile) return;
-    
-    const interval = setInterval(() => {
-      setActiveImage((prev) => (prev === 0 ? 1 : 0));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isMobile]);
-
 
   const marqueeText =
     "(meh-tuh-NOY-uh): a deep shift in your mind, heart, and spirit — a turning point back to your light.";
@@ -197,27 +183,11 @@ export default function Home() {
       {/* Trail Reveal Effect - CLEO+ follows cursor on fast movement */}
       <TrailRevealEffect />
       
-      {/* SVG Duotone Filters */}
+      {/* SVG Duotone Filter */}
       <svg className="absolute h-0 w-0" aria-hidden="true">
         <defs>
-          {/* Duotone Filter 1: For CleoDark - #344259 → #FF1D9D */}
-          <filter id="duotone1">
-            <feColorMatrix
-              type="matrix"
-              values="0.33 0.33 0.33 0 0
-                      0.33 0.33 0.33 0 0
-                      0.33 0.33 0.33 0 0
-                      0    0    0    1 0"
-            />
-            <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.204 1.0" />
-              <feFuncG type="table" tableValues="0.259 0.114" />
-              <feFuncB type="table" tableValues="0.349 0.616" />
-            </feComponentTransfer>
-          </filter>
-
-          {/* Duotone Filter 2: For Cleo3 - #495b80 → #FF1D9D */}
-          <filter id="duotone2">
+          {/* Duotone Filter: #495b80 → #FF1D9D */}
+          <filter id="duotone">
             <feColorMatrix
               type="matrix"
               values="0.33 0.33 0.33 0 0
@@ -234,41 +204,18 @@ export default function Home() {
         </defs>
       </svg>
 
-      {/* Background Images with Crossfade */}
+      {/* Background Image */}
       <div className="absolute inset-0">
-        {/* Image 1: CleoDark */}
-        <div
-          className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-          style={{ opacity: activeImage === 0 ? 1 : 0 }}
-        >
-          <Image
-            src={CleoDark}
-            alt="Metanoia Moments"
-            fill
-            className="object-cover"
-            priority
-            style={{
-              filter: "url(#duotone1) contrast(1.1)",
-            }}
-          />
-        </div>
-
-        {/* Image 2: Cleo3 */}
-        <div
-          className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-          style={{ opacity: activeImage === 1 ? 1 : 0 }}
-        >
-          <Image
-            src={Cleo3}
-            alt="Metanoia Moments"
-            fill
-            className="object-cover"
-            priority
-            style={{
-              filter: "url(#duotone2) contrast(1.1)",
-            }}
-          />
-        </div>
+        <Image
+          src={Cleo3}
+          alt="Metanoia Moments"
+          fill
+          className="object-cover"
+          priority
+          style={{
+            filter: "url(#duotone) contrast(1.1)",
+          }}
+        />
 
         {/* Halftone/Scanline Texture Overlay */}
         <div
