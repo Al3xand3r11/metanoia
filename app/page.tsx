@@ -348,7 +348,7 @@ export default function Home() {
                   className="mx-4 font-black uppercase leading-none text-[#111827]"
                   style={{ 
                     fontFamily: "var(--font-saira-condensed)",
-                    fontSize: "clamp(1rem, 3vw, 3rem)",
+                    fontSize: "clamp(0.875rem, 2vw, 2rem)",
                     letterSpacing: "-0.02em",
                   }}
                 >
