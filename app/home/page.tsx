@@ -159,7 +159,7 @@ export default function Home() {
                   letterSpacing: "0.2em",
                 }}
               >
-                ENTER
+                METANOIA
               </span>
             </Link>
           </div>
