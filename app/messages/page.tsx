@@ -168,7 +168,7 @@ export default function Messages() {
           className="text-white text-[10px] md:text-base uppercase tracking-wider md:tracking-widest text-center"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
-          text your moment of metanoia to{" "}
+          text your name to {" "}
           <span style={{ color: "#FF1D9D" }}>8448716554</span>
         </p>
       </div>
