@@ -12,9 +12,9 @@ import TrailRevealEffect from "@/app/components/TrailRevealEffect";
 
 // Video files for mobile background
 const mobileVideos = [
-  "/beach.mov",
   "/eyes.mov",
   "/laying.mov",
+  "/beach.mov",
   "/outside.mov",
   "/water.mov",
 ];
