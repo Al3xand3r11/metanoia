@@ -31,3 +31,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Marquee animations - slow enough to read casually */
+@keyframes marquee-desktop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-mobile {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-desktop {
+  animation: marquee-desktop 60s linear infinite;
+}
+
+.animate-marquee-mobile {
+  animation: marquee-mobile 30s linear infinite;
+}

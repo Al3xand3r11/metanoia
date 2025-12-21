@@ -19,7 +19,6 @@ const mobileVideos = [
 ];
 
 export default function Home() {
-  const marqueeRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [activeVideo, setActiveVideo] = useState(0);
   const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
@@ -148,6 +147,29 @@ export default function Home() {
                 METANOIA
               </span>
             </Link>
+
+            {/* Definition Text - Mobile Marquee */}
+            <div 
+              className="w-full overflow-hidden -mt-1"
+            >
+              <div 
+                className="flex whitespace-nowrap animate-marquee-mobile"
+              >
+                {[...Array(4)].map((_, i) => (
+                  <span
+                    key={i}
+                    className="mx-3 font-medium uppercase leading-none text-white/70"
+                    style={{ 
+                      fontFamily: "var(--font-saira-condensed)",
+                      fontSize: "0.65rem",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    {marqueeText}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Cleo+ Logo - Above progress indicator */}
@@ -318,9 +340,9 @@ export default function Home() {
             className="w-full overflow-hidden"
             style={{ marginTop: "-2vw" }}
           >
-            <div ref={marqueeRef} className="flex whitespace-nowrap justify-center">
+            <div className="flex whitespace-nowrap animate-marquee-desktop">
               {/* Duplicate content for seamless loop */}
-              {[...Array(4)].map((_, i) => (
+              {[...Array(6)].map((_, i) => (
                 <span
                   key={i}
                   className="mx-4 font-black uppercase leading-none text-[#111827]"
