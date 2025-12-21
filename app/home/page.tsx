@@ -114,28 +114,28 @@ export default function Home() {
           {/* Social Icons - Top Center */}
           <div className="flex items-center justify-center gap-6 px-6 py-8">
             <a
-              href="#"
+              href="https://www.youtube.com/@itscleoplus"
               className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="YouTube"
             >
               <FaYoutube className="h-8 w-8" />
             </a>
             <a
-              href="#"
+              href="https://open.spotify.com/artist/2eg5AuNNcwQYMtoZQNTH4p"
               className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="Spotify"
             >
               <FaSpotify className="h-8 w-8" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/itscleoplus/"
               className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="Instagram"
             >
               <FaInstagram className="h-8 w-8" />
             </a>
             <a
-              href="#"
+              href="https://www.tiktok.com/@itscleoplus"
               className="text-[#F5F7FA] transition-opacity hover:opacity-60"
               aria-label="TikTok"
             >
