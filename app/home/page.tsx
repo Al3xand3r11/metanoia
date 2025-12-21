@@ -164,6 +164,17 @@ export default function Home() {
             </Link>
           </div>
 
+          {/* Cleo+ Logo - Above progress indicator */}
+          <div className="flex justify-center pb-4">
+            <Image
+              src={CleoLogo}
+              alt="Cleo+"
+              width={80}
+              height={40}
+              className="h-auto w-16 opacity-90"
+            />
+          </div>
+
           {/* Video progress indicator */}
           <div className="flex justify-center gap-2 pb-8">
             {mobileVideos.map((_, index) => (
