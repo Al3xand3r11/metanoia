@@ -7,6 +7,8 @@ export default function RippleEffect() {
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const targetMouseRef = useRef({ x: -1000, y: -1000 });
   const animationRef = useRef<number>(0);
+  const logoRef = useRef<HTMLImageElement | null>(null);
+  const logoLoadedRef = useRef(false);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     targetMouseRef.current = {
@@ -24,12 +26,24 @@ export default function RippleEffect() {
 
     let destroyed = false;
 
+    // Load the Cleo+ logo
+    const logo = new Image();
+    logo.src = "/CleoLogo.png";
+    logo.onload = () => {
+      logoRef.current = logo;
+      logoLoadedRef.current = true;
+    };
+
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
 
     resizeCanvas();
+
+    // Logo dimensions
+    const logoWidth = 140;
+    const logoHeight = 70;
 
     const animate = () => {
       if (destroyed) return;
@@ -47,19 +61,21 @@ export default function RippleEffect() {
       const mouseX = mouseRef.current.x;
       const mouseY = mouseRef.current.y;
 
-      // Draw "CLEO+" text at mouse position
-      if (mouseX > 0) {
+      // Draw logo at mouse position
+      if (mouseX > 0 && logoLoadedRef.current && logoRef.current) {
         ctx.save();
         
-        // Set up text style - outlined text
-        ctx.font = "800 180px 'Saira Condensed', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        // Soft transparency
+        ctx.globalAlpha = 0.4;
         
-        // Soft white outline (stroke only, no fill)
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.lineWidth = 2;
-        ctx.strokeText("CLEO+", mouseX, mouseY);
+        // Draw logo centered at cursor
+        ctx.drawImage(
+          logoRef.current,
+          mouseX - logoWidth / 2,
+          mouseY - logoHeight / 2,
+          logoWidth,
+          logoHeight
+        );
         
         ctx.restore();
       }

@@ -16,6 +16,8 @@ export default function TrailRevealEffect() {
   const velocityRef = useRef(0);
   const trailRef = useRef<TrailPoint[]>([]);
   const animationRef = useRef<number>(0);
+  const logoRef = useRef<HTMLImageElement | null>(null);
+  const logoLoadedRef = useRef(false);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     // Store previous position for velocity calculation
@@ -59,12 +61,24 @@ export default function TrailRevealEffect() {
 
     let destroyed = false;
 
+    // Load the Cleo+ logo
+    const logo = new Image();
+    logo.src = "/CleoLogo.png";
+    logo.onload = () => {
+      logoRef.current = logo;
+      logoLoadedRef.current = true;
+    };
+
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
 
     resizeCanvas();
+
+    // Logo dimensions
+    const logoWidth = 200;
+    const logoHeight = 100;
 
     const animate = () => {
       if (destroyed) return;
@@ -79,58 +93,63 @@ export default function TrailRevealEffect() {
       // Decay velocity over time
       velocityRef.current *= 0.92;
 
-      // Draw trail points (older to newer for proper layering)
-      trailRef.current = trailRef.current.filter((point) => {
-        const age = now - point.timestamp;
-        const maxAge = 600; // Trail lasts 600ms
-        
-        if (age > maxAge) return false;
+      // Only draw if logo is loaded
+      if (logoLoadedRef.current && logoRef.current) {
+        // Draw trail points (older to newer for proper layering)
+        trailRef.current = trailRef.current.filter((point) => {
+          const age = now - point.timestamp;
+          const maxAge = 600; // Trail lasts 600ms
+          
+          if (age > maxAge) return false;
 
-        // Calculate fade based on age
-        const fadeProgress = age / maxAge;
-        const opacity = point.opacity * (1 - fadeProgress) * 0.6;
+          // Calculate fade based on age
+          const fadeProgress = age / maxAge;
+          const opacity = point.opacity * (1 - fadeProgress) * 0.6;
 
-        if (opacity > 0.01) {
+          if (opacity > 0.01) {
+            ctx.save();
+            ctx.globalAlpha = opacity;
+            
+            // Draw logo centered at point
+            ctx.drawImage(
+              logoRef.current!,
+              point.x - logoWidth / 2,
+              point.y - logoHeight / 2,
+              logoWidth,
+              logoHeight
+            );
+            
+            ctx.restore();
+          }
+
+          return true;
+        });
+
+        // Draw current position with velocity-based opacity
+        if (mouseRef.current.x > 0 && velocityRef.current > 2) {
           ctx.save();
           
-          // Set up text style
-          ctx.font = "800 180px 'Saira Condensed', sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          // Opacity based on current velocity - more movement = more visible
+          const currentOpacity = Math.min(velocityRef.current / 30, 0.8);
+          ctx.globalAlpha = currentOpacity * 0.6;
           
-          // Subtle transparent fill only - no outline
-          ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.35})`;
-          ctx.fillText("CLEO+", point.x, point.y);
+          // Add glow effect for fast movement
+          if (velocityRef.current > 15) {
+            ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+            ctx.shadowBlur = velocityRef.current / 3;
+          }
+          
+          // Draw logo centered at cursor
+          ctx.drawImage(
+            logoRef.current,
+            mouseRef.current.x - logoWidth / 2,
+            mouseRef.current.y - logoHeight / 2,
+            logoWidth,
+            logoHeight
+          );
           
           ctx.restore();
         }
-
-        return true;
-      });
-
-      // Draw current position with velocity-based opacity
-      if (mouseRef.current.x > 0 && velocityRef.current > 2) {
-        ctx.save();
-        
-        ctx.font = "800 180px 'Saira Condensed', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        
-        // Opacity based on current velocity - more movement = more visible
-        const currentOpacity = Math.min(velocityRef.current / 30, 0.8);
-        
-        // Subtle transparent fill only - no outline
-        ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity * 0.4})`;
-        
-        // Subtle glow effect for fast movement
-        if (velocityRef.current > 15) {
-          ctx.shadowColor = "rgba(255, 255, 255, 0.3)";
-          ctx.shadowBlur = velocityRef.current / 4;
-        }
-        
-        ctx.fillText("CLEO+", mouseRef.current.x, mouseRef.current.y);
-        
-        ctx.restore();
       }
 
       animationRef.current = requestAnimationFrame(animate);
@@ -162,4 +181,3 @@ export default function TrailRevealEffect() {
     />
   );
 }
-

@@ -5,9 +5,9 @@ import Link from "next/link";
 import CleoLogo from "@/public/CleoLogo.png";
 import { useEffect, useRef, useState } from "react";
 import { FaYoutube, FaSpotify, FaInstagram, FaTiktok } from "react-icons/fa";
-import Cleo3 from "@/public/Mia3.webp";
 import { useAudio } from "@/app/context/AudioContext";
 import TrailRevealEffect from "@/app/components/TrailRevealEffect";
+import ParticleDisplacementEffect from "@/app/components/ParticleDisplacementEffect";
 
 // Video files for mobile background
 const mobileVideos = [
@@ -202,46 +202,19 @@ export default function Home() {
   // Desktop Layout (existing)
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
-      {/* Trail Reveal Effect - CLEO+ follows cursor on fast movement */}
+      {/* Trail Reveal Effect - Cleo+ logo follows cursor */}
       <TrailRevealEffect />
       
-      {/* SVG Duotone Filter */}
-      <svg className="absolute h-0 w-0" aria-hidden="true">
-        <defs>
-          {/* Duotone Filter: #495b80 → #FF1D9D */}
-          <filter id="duotone">
-            <feColorMatrix
-              type="matrix"
-              values="0.33 0.33 0.33 0 0
-                      0.33 0.33 0.33 0 0
-                      0.33 0.33 0.33 0 0
-                      0    0    0    1 0"
-            />
-            <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.286 1.0" />
-              <feFuncG type="table" tableValues="0.357 0.114" />
-              <feFuncB type="table" tableValues="0.502 0.616" />
-            </feComponentTransfer>
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Background Image */}
+      {/* Particle Displacement Effect - Interactive background */}
       <div className="absolute inset-0">
-        <Image
-          src={Cleo3}
-          alt="Metanoia Moments"
-          fill
-          className="object-cover"
-          priority
-          style={{
-            filter: "url(#duotone) contrast(1.1)",
-          }}
+        <ParticleDisplacementEffect 
+          imageSrc="/Mia3.webp"
+          particleSize={4}
         />
-
+        
         {/* Halftone/Scanline Texture Overlay */}
         <div
-          className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
+          className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30 z-10"
           style={{
             backgroundImage: `repeating-linear-gradient(
               0deg,
@@ -255,7 +228,7 @@ export default function Home() {
         />
         {/* Subtle noise texture for extra grit */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-10"
+          className="absolute inset-0 pointer-events-none opacity-10 z-10"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
           }}
