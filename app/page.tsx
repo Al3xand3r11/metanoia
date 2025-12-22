@@ -23,7 +23,34 @@ export default function Home() {
   const [activeVideo, setActiveVideo] = useState(0);
   const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number>(0);
   const { play } = useAudio();
+
+  // Smooth progress bar update using requestAnimationFrame
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const updateProgress = () => {
+      if (videoRef.current && progressBarRef.current) {
+        const { currentTime, duration } = videoRef.current;
+        if (duration > 0) {
+          const videoProgress = (currentTime / duration) * 100;
+          const totalProgress = ((activeVideo / mobileVideos.length) * 100) + (videoProgress / mobileVideos.length);
+          progressBarRef.current.style.width = `${totalProgress}%`;
+        }
+      }
+      animationFrameRef.current = requestAnimationFrame(updateProgress);
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(updateProgress);
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isMobile, activeVideo]);
 
   // Handle METANOIA click - play music and navigate
   const handleMetanoiaClick = () => {
@@ -191,16 +218,16 @@ export default function Home() {
             />
           </div>
 
-          {/* Video progress indicator */}
-          <div className="flex justify-center gap-2 pb-8">
-            {mobileVideos.map((_, index) => (
+          {/* Video progress timeline - single continuous bar for all 5 videos */}
+          <div className="flex justify-center px-8 pb-8">
+            <div className="relative w-full max-w-xs h-1 bg-white/20 rounded-full overflow-hidden">
+              {/* Progress fill - updated via ref for smooth animation */}
               <div
-                key={index}
-                className={`h-1 w-8 rounded-full transition-all duration-300 ${
-                  index === activeVideo ? "bg-white" : "bg-white/30"
-                }`}
+                ref={progressBarRef}
+                className="absolute inset-y-0 left-0 bg-white rounded-full"
+                style={{ width: "0%" }}
               />
-            ))}
+            </div>
           </div>
         </div>
       </div>
@@ -209,7 +236,7 @@ export default function Home() {
 
   // Desktop Layout (existing)
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#5A6C8F]">
       {/* Trail Reveal Effect - Cleo+ logo follows cursor */}
       <TrailRevealEffect />
       

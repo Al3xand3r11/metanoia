@@ -16,7 +16,7 @@ export default function TrailRevealEffect() {
   const velocityRef = useRef(0);
   const trailRef = useRef<TrailPoint[]>([]);
   const animationRef = useRef<number>(0);
-  const logoRef = useRef<HTMLImageElement | null>(null);
+  const tintedLogoRef = useRef<HTMLCanvasElement | null>(null);
   const logoLoadedRef = useRef(false);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -61,12 +61,28 @@ export default function TrailRevealEffect() {
 
     let destroyed = false;
 
-    // Load the Cleo+ logo
+    // Load the Cleo+ logo and tint it steel blue
     const logo = new Image();
     logo.src = "/CleoLogo.png";
     logo.onload = () => {
-      logoRef.current = logo;
-      logoLoadedRef.current = true;
+      // Create off-screen canvas to tint the logo
+      const tintCanvas = document.createElement("canvas");
+      tintCanvas.width = logo.naturalWidth;
+      tintCanvas.height = logo.naturalHeight;
+      const tintCtx = tintCanvas.getContext("2d");
+      
+      if (tintCtx) {
+        // Draw original logo
+        tintCtx.drawImage(logo, 0, 0);
+        
+        // Apply steel blue tint using composite operation
+        tintCtx.globalCompositeOperation = "source-atop";
+        tintCtx.fillStyle = "#5A6C8F"; // Steel blue
+        tintCtx.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
+        
+        tintedLogoRef.current = tintCanvas;
+        logoLoadedRef.current = true;
+      }
     };
 
     const resizeCanvas = () => {
@@ -94,7 +110,7 @@ export default function TrailRevealEffect() {
       velocityRef.current *= 0.92;
 
       // Only draw if logo is loaded
-      if (logoLoadedRef.current && logoRef.current) {
+      if (logoLoadedRef.current && tintedLogoRef.current) {
         // Draw trail points (older to newer for proper layering)
         trailRef.current = trailRef.current.filter((point) => {
           const age = now - point.timestamp;
@@ -110,9 +126,9 @@ export default function TrailRevealEffect() {
             ctx.save();
             ctx.globalAlpha = opacity;
             
-            // Draw logo centered at point
+            // Draw tinted logo centered at point
             ctx.drawImage(
-              logoRef.current!,
+              tintedLogoRef.current!,
               point.x - logoWidth / 2,
               point.y - logoHeight / 2,
               logoWidth,
@@ -135,13 +151,13 @@ export default function TrailRevealEffect() {
           
           // Add glow effect for fast movement
           if (velocityRef.current > 15) {
-            ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+            ctx.shadowColor = "rgba(90, 108, 143, 0.6)";
             ctx.shadowBlur = velocityRef.current / 3;
           }
           
-          // Draw logo centered at cursor
+          // Draw tinted logo centered at cursor
           ctx.drawImage(
-            logoRef.current,
+            tintedLogoRef.current,
             mouseRef.current.x - logoWidth / 2,
             mouseRef.current.y - logoHeight / 2,
             logoWidth,

@@ -7,7 +7,7 @@ import { Message } from "@/lib/types";
 import { mockMessages } from "@/lib/mockData";
 import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock } from "react-icons/fi";
 
-const DASHBOARD_PASSWORD = "t3st";
+const DASHBOARD_PASSWORD = process.env.NEXT_PUBLIC_DASHBOARD_PASSWORD;
 
 function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   const [password, setPassword] = useState("");

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import { getApprovedMessages } from "@/lib/mockData";
-import RippleEffect from "@/app/components/RippleEffect";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { useAudio } from "@/app/context/AudioContext";
 
@@ -243,8 +242,6 @@ export default function Messages() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* Ripple Effect */}
-      <RippleEffect />
 
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-4 md:py-6 bg-gradient-to-b from-black via-black/80 to-transparent">

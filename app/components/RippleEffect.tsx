@@ -41,9 +41,13 @@ export default function RippleEffect() {
 
     resizeCanvas();
 
-    // Logo dimensions
-    const logoWidth = 140;
-    const logoHeight = 70;
+    // Logo dimensions - more proportionate
+    const logoWidth = 100;
+    const logoHeight = 40;
+
+    // Create offscreen canvas for blue-tinted logo
+    const offscreenCanvas = document.createElement("canvas");
+    const offscreenCtx = offscreenCanvas.getContext("2d");
 
     const animate = () => {
       if (destroyed) return;
@@ -61,16 +65,46 @@ export default function RippleEffect() {
       const mouseX = mouseRef.current.x;
       const mouseY = mouseRef.current.y;
 
-      // Draw logo at mouse position
-      if (mouseX > 0 && logoLoadedRef.current && logoRef.current) {
+      // Draw logo at mouse position with blue hue
+      if (mouseX > 0 && logoLoadedRef.current && logoRef.current && offscreenCtx) {
+        // Set up offscreen canvas
+        offscreenCanvas.width = logoWidth;
+        offscreenCanvas.height = logoHeight;
+        
+        // Clear and draw the original logo
+        offscreenCtx.clearRect(0, 0, logoWidth, logoHeight);
+        offscreenCtx.drawImage(logoRef.current, 0, 0, logoWidth, logoHeight);
+        
+        // Get image data and colorize each pixel
+        const imageData = offscreenCtx.getImageData(0, 0, logoWidth, logoHeight);
+        const data = imageData.data;
+        
+        // Blue color components (steel blue #5A6C8F)
+        const blueR = 90;
+        const blueG = 108;
+        const blueB = 143;
+        
+        for (let i = 0; i < data.length; i += 4) {
+          // Get the brightness of the original pixel
+          const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3 / 255;
+          
+          // Apply blue color based on brightness
+          data[i] = blueR * brightness;     // R
+          data[i + 1] = blueG * brightness; // G
+          data[i + 2] = blueB * brightness; // B
+          // Alpha stays the same
+        }
+        
+        offscreenCtx.putImageData(imageData, 0, 0);
+        
         ctx.save();
         
-        // Soft transparency
-        ctx.globalAlpha = 0.4;
+        // Visible, blends with blue background
+        ctx.globalAlpha = 0.8;
         
-        // Draw logo centered at cursor
+        // Draw the blue-tinted logo centered at cursor
         ctx.drawImage(
-          logoRef.current,
+          offscreenCanvas,
           mouseX - logoWidth / 2,
           mouseY - logoHeight / 2,
           logoWidth,

@@ -117,7 +117,7 @@ export default function Submit() {
             <div className="absolute inset-0 bg-black/50" />
           </div>
         ) : (
-          <div className="absolute inset-0 bg-[#344259]">
+          <div className="absolute inset-0 bg-[#5A6C8F]">
             <svg className="absolute h-0 w-0" aria-hidden="true">
               <defs>
                 <filter id="duotone-success">
@@ -343,7 +343,7 @@ export default function Submit() {
 
   // Desktop Layout
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#344259]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#5A6C8F]">
       {/* SVG Duotone Filter */}
       <svg className="absolute h-0 w-0" aria-hidden="true">
         <defs>
