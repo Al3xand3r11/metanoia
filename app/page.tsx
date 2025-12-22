@@ -236,7 +236,7 @@ export default function Home() {
 
   // Desktop Layout (existing)
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#5A6C8F]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#8B9CB5]">
       {/* Trail Reveal Effect - Cleo+ logo follows cursor */}
       <TrailRevealEffect />
       

@@ -30,6 +30,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-01T10:30:00Z",
     approved_at: "2024-12-01T11:00:00Z",
+    source: "mock",
   },
   {
     id: "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
@@ -38,6 +39,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-02T14:15:00Z",
     approved_at: "2024-12-02T15:00:00Z",
+    source: "mock",
   },
   {
     id: "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
@@ -46,6 +48,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-03T09:45:00Z",
     approved_at: "2024-12-03T10:30:00Z",
+    source: "mock",
   },
   {
     id: "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
@@ -54,6 +57,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-04T16:20:00Z",
     approved_at: "2024-12-04T17:00:00Z",
+    source: "mock",
   },
   {
     id: "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
@@ -62,6 +66,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-05T11:00:00Z",
     approved_at: "2024-12-05T12:00:00Z",
+    source: "mock",
   },
   {
     id: "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
@@ -70,6 +75,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-06T08:30:00Z",
     approved_at: "2024-12-06T09:15:00Z",
+    source: "mock",
   },
   {
     id: "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
@@ -78,6 +84,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-07T13:45:00Z",
     approved_at: "2024-12-07T14:30:00Z",
+    source: "mock",
   },
   {
     id: "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
@@ -86,6 +93,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-08T17:00:00Z",
     approved_at: "2024-12-08T18:00:00Z",
+    source: "mock",
   },
   {
     id: "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
@@ -94,6 +102,7 @@ export const mockMessages: Message[] = [
     status: "approved",
     created_at: "2024-12-09T10:15:00Z",
     approved_at: "2024-12-09T11:00:00Z",
+    source: "mock",
   },
 ];
 

@@ -141,13 +141,14 @@ export default function TrailRevealEffect() {
           return true;
         });
 
-        // Draw current position with velocity-based opacity
-        if (mouseRef.current.x > 0 && velocityRef.current > 2) {
+        // Always draw logo at cursor position - stays visible even when mouse is still
+        if (mouseRef.current.x > 0) {
           ctx.save();
           
-          // Opacity based on current velocity - more movement = more visible
-          const currentOpacity = Math.min(velocityRef.current / 30, 0.8);
-          ctx.globalAlpha = currentOpacity * 0.6;
+          // Base opacity always visible, plus extra brightness when moving
+          const baseOpacity = 0.5;
+          const movementBonus = Math.min(velocityRef.current / 30, 0.4);
+          ctx.globalAlpha = baseOpacity + movementBonus;
           
           // Add glow effect for fast movement - lighter steel blue
           if (velocityRef.current > 15) {

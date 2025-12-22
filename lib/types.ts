@@ -1,6 +1,9 @@
 // Message status options
 export type MessageStatus = "pending" | "approved" | "hidden";
 
+// Message source - distinguishes between mock data and real user submissions
+export type MessageSource = "mock" | "user";
+
 // The shape of a message from the database
 export interface Message {
   id: string;
@@ -9,6 +12,7 @@ export interface Message {
   status: MessageStatus;
   created_at: string;
   approved_at: string | null;
+  source?: MessageSource; // Optional - added client-side to distinguish data origin
 }
 
 // For inserting new messages (id and timestamps are auto-generated)

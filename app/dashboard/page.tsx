@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Message } from "@/lib/types";
 import { mockMessages } from "@/lib/mockData";
-import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock } from "react-icons/fi";
+import { createClient } from "@/lib/supabase/client";
+import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock, FiUser, FiDatabase } from "react-icons/fi";
 
 const DASHBOARD_PASSWORD = process.env.NEXT_PUBLIC_DASHBOARD_PASSWORD;
 
@@ -99,9 +100,52 @@ export default function Dashboard() {
   // Password protection state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Use state to manage messages (simulating database updates)
+  // Use state to manage messages (combining mock data and database data)
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("all");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch messages from Supabase and combine with mock data
+  useEffect(() => {
+    async function fetchMessages() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("messages")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching messages:", error);
+          // Fall back to just mock data
+          setMessages(mockMessages);
+        } else {
+          // Add source: "user" to database messages and combine with mock data
+          const userMessages: Message[] = (data || []).map((msg: Message) => ({
+            id: msg.id,
+            phone_hash: msg.phone_hash,
+            content: msg.content,
+            status: msg.status,
+            created_at: msg.created_at,
+            approved_at: msg.approved_at,
+            source: "user" as const,
+          }));
+          
+          // Combine: user messages first (newest), then mock data
+          setMessages([...userMessages, ...mockMessages]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch messages:", err);
+        setMessages(mockMessages);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (isAuthenticated) {
+      fetchMessages();
+    }
+  }, [isAuthenticated]);
 
   // Show password gate if not authenticated
   if (!isAuthenticated) {
@@ -218,87 +262,118 @@ export default function Dashboard() {
         <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800 overflow-hidden">
           {/* Table Header */}
           <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-800 text-zinc-500 text-sm font-medium uppercase tracking-wider">
-            <div className="col-span-6" style={{ fontFamily: "var(--font-saira)" }}>Message</div>
+            <div className="col-span-5" style={{ fontFamily: "var(--font-saira)" }}>Message</div>
+            <div className="col-span-2 text-center" style={{ fontFamily: "var(--font-saira)" }}>Source</div>
             <div className="col-span-2 text-center" style={{ fontFamily: "var(--font-saira)" }}>Status</div>
-            <div className="col-span-2 text-center" style={{ fontFamily: "var(--font-saira)" }}>Date</div>
+            <div className="col-span-1 text-center" style={{ fontFamily: "var(--font-saira)" }}>Date</div>
             <div className="col-span-2 text-center" style={{ fontFamily: "var(--font-saira)" }}>Actions</div>
           </div>
 
           {/* Table Body */}
           <div className="divide-y divide-zinc-800/50">
-            {filteredMessages.map((message) => (
-              <div
-                key={message.id}
-                className="grid grid-cols-12 gap-4 px-6 py-5 items-center hover:bg-zinc-800/30 transition-colors"
-              >
-                {/* Message Content */}
-                <div className="col-span-6">
-                  <p
-                    className="text-white text-base leading-relaxed line-clamp-2"
-                    style={{ fontFamily: "var(--font-saira)" }}
-                  >
-                    &ldquo;{message.content}&rdquo;
-                  </p>
-                </div>
-
-                {/* Status Badge */}
-                <div className="col-span-2 flex justify-center">
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${getStatusStyles(
-                      message.status
-                    )}`}
-                    style={{ fontFamily: "var(--font-saira)" }}
-                  >
-                    {message.status === "approved" && <FiCheck className="w-3 h-3" />}
-                    {message.status === "pending" && <FiClock className="w-3 h-3" />}
-                    {message.status === "hidden" && <FiEyeOff className="w-3 h-3" />}
-                    {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
-                  </span>
-                </div>
-
-                {/* Date */}
-                <div className="col-span-2 text-center">
-                  <span
-                    className="text-zinc-500 text-sm"
-                    style={{ fontFamily: "var(--font-saira)" }}
-                  >
-                    {formatDate(message.created_at)}
-                  </span>
-                </div>
-
-                {/* Actions */}
-                <div className="col-span-2 flex items-center justify-center gap-2">
-                  {/* Toggle Visibility Button */}
-                  <button
-                    onClick={() => toggleVisibility(message.id)}
-                    className={`p-2.5 rounded-lg transition-all ${
-                      message.status === "approved"
-                        ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                        : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white"
-                    }`}
-                    title={message.status === "approved" ? "Hide from public" : "Show on public page"}
-                  >
-                    {message.status === "approved" ? (
-                      <FiEye className="w-4 h-4" />
-                    ) : (
-                      <FiEyeOff className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  {/* Delete Button (no functionality) */}
-                  <button
-                    className="p-2.5 rounded-lg bg-zinc-800 text-zinc-500 hover:bg-red-500/20 hover:text-red-400 transition-all"
-                    title="Delete message"
-                  >
-                    <FiTrash2 className="w-4 h-4" />
-                  </button>
-                </div>
+            {isLoading ? (
+              <div className="px-6 py-16 text-center">
+                <p
+                  className="text-zinc-500 text-lg"
+                  style={{ fontFamily: "var(--font-saira)" }}
+                >
+                  Loading messages...
+                </p>
               </div>
-            ))}
+            ) : (
+              filteredMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className="grid grid-cols-12 gap-4 px-6 py-5 items-center hover:bg-zinc-800/30 transition-colors"
+                >
+                  {/* Message Content */}
+                  <div className="col-span-5">
+                    <p
+                      className="text-white text-base leading-relaxed line-clamp-2"
+                      style={{ fontFamily: "var(--font-saira)" }}
+                    >
+                      &ldquo;{message.content}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Source Badge */}
+                  <div className="col-span-2 flex justify-center">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${
+                        message.source === "user"
+                          ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                          : "bg-purple-500/20 text-purple-400 border-purple-500/30"
+                      }`}
+                      style={{ fontFamily: "var(--font-saira)" }}
+                    >
+                      {message.source === "user" ? (
+                        <FiUser className="w-3 h-3" />
+                      ) : (
+                        <FiDatabase className="w-3 h-3" />
+                      )}
+                      {message.source === "user" ? "User" : "Mock"}
+                    </span>
+                  </div>
+
+                  {/* Status Badge */}
+                  <div className="col-span-2 flex justify-center">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${getStatusStyles(
+                        message.status
+                      )}`}
+                      style={{ fontFamily: "var(--font-saira)" }}
+                    >
+                      {message.status === "approved" && <FiCheck className="w-3 h-3" />}
+                      {message.status === "pending" && <FiClock className="w-3 h-3" />}
+                      {message.status === "hidden" && <FiEyeOff className="w-3 h-3" />}
+                      {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
+                    </span>
+                  </div>
+
+                  {/* Date */}
+                  <div className="col-span-1 text-center">
+                    <span
+                      className="text-zinc-500 text-sm"
+                      style={{ fontFamily: "var(--font-saira)" }}
+                    >
+                      {formatDate(message.created_at)}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-2 flex items-center justify-center gap-2">
+                    {/* Toggle Visibility Button */}
+                    <button
+                      onClick={() => toggleVisibility(message.id)}
+                      className={`p-2.5 rounded-lg transition-all ${
+                        message.status === "approved"
+                          ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+                          : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                      }`}
+                      title={message.status === "approved" ? "Hide from public" : "Show on public page"}
+                    >
+                      {message.status === "approved" ? (
+                        <FiEye className="w-4 h-4" />
+                      ) : (
+                        <FiEyeOff className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {/* Delete Button (no functionality) */}
+                    <button
+                      className="p-2.5 rounded-lg bg-zinc-800 text-zinc-500 hover:bg-red-500/20 hover:text-red-400 transition-all"
+                      title="Delete message"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Empty State */}
-          {filteredMessages.length === 0 && (
+          {!isLoading && filteredMessages.length === 0 && (
             <div className="px-6 py-16 text-center">
               <p
                 className="text-zinc-500 text-lg"
