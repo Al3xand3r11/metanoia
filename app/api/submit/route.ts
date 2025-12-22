@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
-import { NewMessage } from "@/lib/types";
+import { Message, NewMessage } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("messages")
-      .insert(newMessage as any)
+      .insert(newMessage as never)
       .select()
       .single();
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Web submission received and stored:", data?.id);
+    console.log("Web submission received and stored:", (data as Message | null)?.id);
 
     return NextResponse.json(
       { success: true, message: "Your moment has been submitted!" },
