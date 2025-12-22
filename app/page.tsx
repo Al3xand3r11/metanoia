@@ -136,11 +136,19 @@ export default function Home() {
               onClick={handleMetanoiaClick}
             >
               <span
-                className="font-black uppercase text-[#F5F7FA] transition-all duration-300"
+                className="font-black uppercase text-white transition-all duration-300"
                 style={{
                   fontFamily: "var(--font-saira-condensed)",
                   fontSize: "2.5rem",
-                  textShadow: "0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.4)",
+                  textShadow: `
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 40px #fff,
+                    0 0 80px rgba(255,255,255,0.8),
+                    0 0 120px rgba(255,255,255,0.6),
+                    0 0 160px rgba(255,255,255,0.4)
+                  `,
                   letterSpacing: "0.05em",
                 }}
               >
