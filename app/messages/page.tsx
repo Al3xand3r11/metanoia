@@ -238,15 +238,6 @@ export default function Messages() {
       >
         &ldquo;{content}&rdquo;
       </blockquote>
-      <div className="mt-3 md:mt-6 flex items-center gap-2">
-        <div className="w-6 md:w-10 h-px bg-linear-to-r from-white/40 to-transparent" />
-        <span
-          className="text-white/30 text-[10px] md:text-sm uppercase tracking-widest"
-          style={{ fontFamily: "var(--font-helvetica-neue)" }}
-        >
-          Metanoia Moment
-        </span>
-      </div>
     </div>
   );
 
@@ -336,6 +327,8 @@ export default function Messages() {
         >
           text your name to {" "}
           <span style={{ color: "#FF1D9D" }}>8448716554</span>
+          {" "}to submit your moment of{" "}
+          <span style={{ color: "#FF1D9D" }}>metanoia</span>
         </p>
       </div>
     </div>
