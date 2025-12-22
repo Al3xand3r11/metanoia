@@ -56,5 +56,5 @@ body {
 }
 
 .animate-marquee-mobile {
-  animation: marquee-mobile 30s linear infinite;
+  animation: marquee-mobile 15s linear infinite;
 }

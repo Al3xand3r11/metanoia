@@ -136,12 +136,12 @@ export default function Home() {
               onClick={handleMetanoiaClick}
             >
               <span
-                className="font-black uppercase text-[#F5F7FA] transition-all duration-300 hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+                className="font-black uppercase text-[#F5F7FA] transition-all duration-300"
                 style={{
                   fontFamily: "var(--font-saira-condensed)",
                   fontSize: "2.5rem",
-                  textShadow: "0 4px 30px rgba(0, 0, 0, 0.6)",
-                  letterSpacing: "0.2em",
+                  textShadow: "0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.4)",
+                  letterSpacing: "0.05em",
                 }}
               >
                 METANOIA
@@ -177,9 +177,9 @@ export default function Home() {
             <Image
               src={CleoLogo}
               alt="Cleo+"
-              width={80}
-              height={40}
-              className="h-auto w-16 opacity-90"
+              width={100}
+              height={50}
+              className="h-auto w-24 opacity-90"
             />
           </div>
 

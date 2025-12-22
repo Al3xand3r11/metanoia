@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import { getApprovedMessages } from "@/lib/mockData";
@@ -13,6 +13,10 @@ export default function Messages() {
   const { isMuted, toggleMute } = useAudio();
   const approvedMessages = getApprovedMessages();
   const [isMobile, setIsMobile] = useState(false);
+  const animationsRef = useRef<gsap.core.Tween[]>([]);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartPositionsRef = useRef<number[]>([]);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -29,9 +33,165 @@ export default function Messages() {
   const row1 = approvedMessages.filter((_, i) => i % 2 === 0);
   const row2 = approvedMessages.filter((_, i) => i % 2 === 1);
 
+  // Handle drag start
+  const handleDragStart = useCallback((clientX: number) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = clientX;
+    
+    // Pause all animations and store current positions
+    if (scrollContainerRef.current) {
+      const rows = scrollContainerRef.current.querySelectorAll(".scroll-row");
+      dragStartPositionsRef.current = [];
+      
+      rows.forEach((row, index) => {
+        const rowElement = row as HTMLElement;
+        const transform = gsap.getProperty(rowElement, "x") as number;
+        dragStartPositionsRef.current[index] = transform;
+      });
+      
+      animationsRef.current.forEach(anim => anim.pause());
+    }
+  }, []);
+
+  // Handle drag move
+  const handleDragMove = useCallback((clientX: number) => {
+    if (!isDraggingRef.current || !scrollContainerRef.current) return;
+    
+    const deltaX = clientX - dragStartXRef.current;
+    const rows = scrollContainerRef.current.querySelectorAll(".scroll-row");
+    
+    rows.forEach((row, index) => {
+      const rowElement = row as HTMLElement;
+      const contentWidth = rowElement.scrollWidth / 2;
+      let newX = dragStartPositionsRef.current[index] + deltaX * (index % 2 === 0 ? 1 : -1);
+      
+      // Wrap around for infinite scroll effect
+      if (newX > 0) newX = -contentWidth + (newX % contentWidth);
+      if (newX < -contentWidth) newX = newX % contentWidth;
+      
+      gsap.set(rowElement, { x: newX });
+    });
+  }, []);
+
+  // Handle drag end
+  const handleDragEnd = useCallback(() => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    
+    // Resume animations from current positions
+    if (scrollContainerRef.current) {
+      const rows = scrollContainerRef.current.querySelectorAll(".scroll-row");
+      
+      // Kill old animations
+      animationsRef.current.forEach(anim => anim.kill());
+      animationsRef.current = [];
+      
+      rows.forEach((row, index) => {
+        const rowElement = row as HTMLElement;
+        const contentWidth = rowElement.scrollWidth / 2;
+        const currentX = gsap.getProperty(rowElement, "x") as number;
+        
+        const direction = index % 2 === 0 ? -1 : 1;
+        const duration = isMobile ? 120 : 200 + index * 40;
+        
+        // Calculate remaining distance for seamless continuation
+        const targetX = direction * -contentWidth;
+        const remainingDistance = Math.abs(targetX - currentX);
+        const remainingDuration = (remainingDistance / contentWidth) * duration;
+        
+        const anim = gsap.to(rowElement, {
+          x: targetX,
+          duration: remainingDuration,
+          ease: "none",
+          onComplete: () => {
+            // Reset and restart infinite loop
+            gsap.set(rowElement, { x: 0 });
+            const loopAnim = gsap.to(rowElement, {
+              x: targetX,
+              duration: duration,
+              ease: "none",
+              repeat: -1,
+            });
+            animationsRef.current[index] = loopAnim;
+          }
+        });
+        animationsRef.current[index] = anim;
+      });
+    }
+  }, [isMobile]);
+
+  // Mouse events for desktop
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      container.style.cursor = "grabbing";
+      handleDragStart(e.clientX);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      handleDragMove(e.clientX);
+    };
+
+    const handleMouseUp = () => {
+      container.style.cursor = "grab";
+      handleDragEnd();
+    };
+
+    const handleMouseLeave = () => {
+      if (isDraggingRef.current) {
+        container.style.cursor = "grab";
+        handleDragEnd();
+      }
+    };
+
+    container.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [handleDragStart, handleDragMove, handleDragEnd]);
+
+  // Touch events for mobile
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      handleDragStart(e.touches[0].clientX);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      handleDragMove(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+      handleDragEnd();
+    };
+
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
+    container.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [handleDragStart, handleDragMove, handleDragEnd]);
+
   useEffect(() => {
     if (scrollContainerRef.current) {
       const rows = scrollContainerRef.current.querySelectorAll(".scroll-row");
+      animationsRef.current = [];
 
       rows.forEach((row, index) => {
         const rowElement = row as HTMLElement;
@@ -41,14 +201,20 @@ export default function Messages() {
         const direction = index % 2 === 0 ? -1 : 1;
         const duration = isMobile ? 120 : 200 + index * 40; // Faster on mobile
 
-        gsap.to(rowElement, {
+        const anim = gsap.to(rowElement, {
           x: direction * -contentWidth,
           duration: duration,
           ease: "none",
           repeat: -1,
         });
+        
+        animationsRef.current.push(anim);
       });
     }
+    
+    return () => {
+      animationsRef.current.forEach(anim => anim.kill());
+    };
   }, [isMobile]);
 
   const MessageCard = ({ content }: { content: string }) => (
@@ -120,7 +286,7 @@ export default function Messages() {
       {/* Scrolling Messages Grid */}
       <div
         ref={scrollContainerRef}
-        className="relative z-10 flex flex-col justify-center min-h-screen gap-4 md:gap-8 py-20 md:py-24"
+        className="relative z-10 flex flex-col justify-center min-h-screen gap-4 md:gap-8 py-20 md:py-24 cursor-grab select-none"
       >
         {isMobile ? (
           /* Mobile: Single Row */
