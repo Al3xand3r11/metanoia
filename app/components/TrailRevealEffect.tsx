@@ -75,9 +75,9 @@ export default function TrailRevealEffect() {
         // Draw original logo
         tintCtx.drawImage(logo, 0, 0);
         
-        // Apply steel blue tint using composite operation
+        // Apply lighter steel blue tint using composite operation
         tintCtx.globalCompositeOperation = "source-atop";
-        tintCtx.fillStyle = "#5A6C8F"; // Steel blue
+        tintCtx.fillStyle = "#8CA0BE"; // Lighter steel blue
         tintCtx.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
         
         tintedLogoRef.current = tintCanvas;
@@ -92,9 +92,9 @@ export default function TrailRevealEffect() {
 
     resizeCanvas();
 
-    // Logo dimensions
-    const logoWidth = 200;
-    const logoHeight = 100;
+    // Logo dimensions - more proportional (taller, narrower)
+    const logoWidth = 160;
+    const logoHeight = 120;
 
     const animate = () => {
       if (destroyed) return;
@@ -149,9 +149,9 @@ export default function TrailRevealEffect() {
           const currentOpacity = Math.min(velocityRef.current / 30, 0.8);
           ctx.globalAlpha = currentOpacity * 0.6;
           
-          // Add glow effect for fast movement
+          // Add glow effect for fast movement - lighter steel blue
           if (velocityRef.current > 15) {
-            ctx.shadowColor = "rgba(90, 108, 143, 0.6)";
+            ctx.shadowColor = "rgba(140, 160, 190, 0.6)";
             ctx.shadowBlur = velocityRef.current / 3;
           }
           

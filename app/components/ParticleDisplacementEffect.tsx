@@ -35,9 +35,9 @@ export default function ParticleDisplacementEffect({
     // Convert to grayscale
     const gray = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
     
-    // Duotone colors: Steel blue base → #FF1D9D (light/accent) for highlights
-    const darkColor = { r: 90, g: 108, b: 143 };   // #5A6C8F (steel blue - was too dark)
-    const midColor = { r: 120, g: 138, b: 170 };   // Lighter steel blue
+    // Duotone colors: Lighter steel blue base → #FF1D9D (light/accent) for highlights
+    const darkColor = { r: 110, g: 130, b: 165 };  // Lighter steel blue for shadows
+    const midColor = { r: 140, g: 160, b: 190 };   // Even lighter steel blue for midtones
     const lightColor = { r: 255, g: 29, b: 157 };  // #FF1D9D (hot pink for highlights)
     
     let finalR, finalG, finalB;
