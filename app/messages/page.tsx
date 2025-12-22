@@ -319,7 +319,7 @@ export default function Messages() {
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center px-4 md:px-8 py-4 md:py-6 bg-gradient-to-t from-black via-black/80 to-transparent">
         <p
-          className="text-white text-[10px] md:text-base uppercase tracking-wider md:tracking-widest text-center"
+          className="text-white text-[8px] md:text-base uppercase tracking-wide md:tracking-widest text-center whitespace-nowrap"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
           text your name to {" "}
