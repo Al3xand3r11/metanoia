@@ -322,7 +322,7 @@ export default function Messages() {
           className="text-white text-[8px] md:text-base uppercase tracking-wide md:tracking-widest text-center whitespace-nowrap"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
-          text your name to {" "}
+          text Start to {" "}
           <span style={{ color: "#FF1D9D" }}>8448716554</span>
           {" "}to submit your moment of{" "}
           <span style={{ color: "#FF1D9D" }}>metanoia</span>
