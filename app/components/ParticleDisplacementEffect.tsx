@@ -30,41 +30,23 @@ export default function ParticleDisplacementEffect({
   const animationRef = useRef<number>(0);
   const imageLoadedRef = useRef(false);
 
-  // Duotone color mapping
+  // Duotone color mapping - Steel blue shadows → Hot pink highlights (matching screenshot)
   const applyDuotone = useCallback((r: number, g: number, b: number): string => {
-    // Convert to grayscale
+    // Convert to grayscale with slight emphasis on luminance
     const gray = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
     
-    // Duotone colors: Lighter steel blue base → #FF1D9D (light/accent) for highlights
-    const darkColor = { r: 110, g: 130, b: 165 };  // Lighter steel blue for shadows
-    const midColor = { r: 140, g: 160, b: 190 };   // Even lighter steel blue for midtones
-    const lightColor = { r: 255, g: 29, b: 157 };  // #FF1D9D (hot pink for highlights)
+    // Colors sampled from screenshot:
+    // Shadows: Brighter steel blue-gray with purple undertone
+    // Highlights: Slightly muted hot pink/magenta
+    const shadowColor = { r: 155, g: 138, b: 178 };  // Brighter steel blue-purple for shadows
+    const highlightColor = { r: 235, g: 95, b: 165 }; // Flattened hot pink for highlights
     
-    let finalR, finalG, finalB;
+    // Direct linear interpolation between shadow and highlight
+    const finalR = shadowColor.r + (highlightColor.r - shadowColor.r) * gray;
+    const finalG = shadowColor.g + (highlightColor.g - shadowColor.g) * gray;
+    const finalB = shadowColor.b + (highlightColor.b - shadowColor.b) * gray;
     
-    if (gray < 0.5) {
-      // Interpolate between dark and mid
-      const t = gray * 2;
-      finalR = darkColor.r + (midColor.r - darkColor.r) * t;
-      finalG = darkColor.g + (midColor.g - darkColor.g) * t;
-      finalB = darkColor.b + (midColor.b - darkColor.b) * t;
-    } else {
-      // Interpolate between mid and light (subtle pink in highlights)
-      const t = (gray - 0.5) * 2;
-      // Only add slight pink tint to very bright areas
-      const pinkInfluence = Math.pow(t, 3) * 0.3; // Cubic falloff, max 30% influence
-      finalR = midColor.r + (lightColor.r - midColor.r) * pinkInfluence + (255 - midColor.r) * t * 0.7;
-      finalG = midColor.g + (lightColor.g - midColor.g) * pinkInfluence + (255 - midColor.g) * t * 0.3;
-      finalB = midColor.b + (lightColor.b - midColor.b) * pinkInfluence + (255 - midColor.b) * t * 0.5;
-    }
-    
-    // Apply contrast boost
-    const contrast = 1.1;
-    finalR = ((finalR / 255 - 0.5) * contrast + 0.5) * 255;
-    finalG = ((finalG / 255 - 0.5) * contrast + 0.5) * 255;
-    finalB = ((finalB / 255 - 0.5) * contrast + 0.5) * 255;
-    
-    return `rgb(${Math.round(Math.max(0, Math.min(255, finalR)))}, ${Math.round(Math.max(0, Math.min(255, finalG)))}, ${Math.round(Math.max(0, Math.min(255, finalB)))})`;
+    return `rgb(${Math.round(finalR)}, ${Math.round(finalG)}, ${Math.round(finalB)})`;
   }, []);
 
   const initParticles = useCallback((canvas: HTMLCanvasElement, img: HTMLImageElement) => {
