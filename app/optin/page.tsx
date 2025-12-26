@@ -163,6 +163,15 @@ export default function OptInPage() {
           <Link href="/terms" className="hover:text-gray-300 transition-colors">
             Terms of Service
           </Link>
+          <Link href="/about" className="hover:text-gray-300 transition-colors">
+            About & Contact
+          </Link>
+          <Link
+            href="/optin"
+            className="text-[#FF1482]"
+          >
+            SMS Opt-In
+          </Link>
           <Link href="/" className="hover:text-gray-300 transition-colors">
             Home
           </Link>
