@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
+import Image from "next/image";
 import { getApprovedMessages } from "@/lib/mockData";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { useAudio } from "@/app/context/AudioContext";
+import messageBackground from "@/public/messageBackground.webp";
 
 export default function Messages() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -242,6 +244,18 @@ export default function Messages() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={messageBackground}
+          alt=""
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
 
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-4 md:py-6 bg-gradient-to-b from-black via-black/80 to-transparent">
