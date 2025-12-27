@@ -41,8 +41,8 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const play = useCallback(() => {
     if (audioRef.current) {
       // If audio hasn't been started yet, set to 18 seconds
-      if (audioRef.current.currentTime === 0 || audioRef.current.currentTime === 18) {
-        audioRef.current.currentTime = 18;
+      if (audioRef.current.currentTime === 0 || audioRef.current.currentTime === 19) {
+        audioRef.current.currentTime = 19;
       }
       audioRef.current.play().catch(console.error);
     }
