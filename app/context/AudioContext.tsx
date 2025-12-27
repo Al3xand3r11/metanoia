@@ -23,7 +23,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (!audioRef.current) {
       const audio = new Audio("/metanoia-cleo-master.m4a");
       audio.loop = true;
-      audio.currentTime = 18; // Start at 18 seconds
+      audio.currentTime = 20; // Start at 18 seconds
       audioRef.current = audio;
 
       audio.addEventListener("play", () => setIsPlaying(true));
