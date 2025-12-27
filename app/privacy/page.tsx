@@ -288,7 +288,7 @@ export default function PrivacyPolicyPage() {
                 <p className="mb-2">
                   <strong className="text-white">Cleo+</strong>
                 </p>
-                <p>1331 N Cahuenga Blvd, Unit 5301</p>
+                <p>1331 N Cahuenga Blvd</p>
                 <p>Los Angeles, CA 90028</p>
                 <p>United States</p>
                 <p className="mt-4">
