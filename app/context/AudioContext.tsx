@@ -13,7 +13,7 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
-const START_TIME = 19;
+const START_TIME = 19.5;  // Start at 19.5 seconds to avoid initial silence
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
