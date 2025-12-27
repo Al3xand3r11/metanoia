@@ -38,8 +38,8 @@ export default function ParticleDisplacementEffect({
     // Colors sampled from screenshot:
     // Shadows: Brighter steel blue-gray with purple undertone
     // Highlights: Slightly muted hot pink/magenta
-    const shadowColor = { r: 155, g: 138, b: 178 };  // Brighter steel blue-purple for shadows
-    const highlightColor = { r: 235, g: 95, b: 165 }; // Flattened hot pink for highlights
+    const shadowColor = { r: 140, g: 150, b: 180 };  // Brighter steel blue-purple for shadows
+    const highlightColor = { r: 235, g: 95, b: 195 }; // Flattened hot pink for highlights
     
     // Direct linear interpolation between shadow and highlight
     const finalR = shadowColor.r + (highlightColor.r - shadowColor.r) * gray;
