@@ -23,13 +23,17 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (!audioRef.current) {
       const audio = new Audio("/metanoia-cleo-master.m4a");
       audio.loop = true;
-      audio.currentTime = 19; // Start at 18 seconds
       audioRef.current = audio;
-
+  
+      // Wait for metadata to load before seeking
+      audio.addEventListener("loadedmetadata", () => {
+        audio.currentTime = 19;
+      });
+  
       audio.addEventListener("play", () => setIsPlaying(true));
       audio.addEventListener("pause", () => setIsPlaying(false));
     }
-
+    
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -40,11 +44,14 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
   const play = useCallback(() => {
     if (audioRef.current) {
-      // If audio hasn't been started yet, set to 18 seconds
-      if (audioRef.current.currentTime === 0 || audioRef.current.currentTime === 19) {
-        audioRef.current.currentTime = 19;
+      const audio = audioRef.current;
+      
+      // Ensure we start at 19 seconds if at the beginning
+      if (audio.currentTime < 19) {
+        audio.currentTime = 19;
       }
-      audioRef.current.play().catch(console.error);
+      
+      audio.play().catch(console.error);
     }
   }, []);
 
