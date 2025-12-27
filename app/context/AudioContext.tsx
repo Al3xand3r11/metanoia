@@ -13,27 +13,45 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
+const START_TIME = 19;
+
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const hasStartedRef = useRef(false);
 
   // Initialize audio element
   useEffect(() => {
     if (!audioRef.current) {
       const audio = new Audio("/metanoia-cleo-master.m4a");
       audio.loop = true;
+      audio.preload = "auto"; // Preload the audio file
       audioRef.current = audio;
-  
-      // Wait for metadata to load before seeking
-      audio.addEventListener("loadedmetadata", () => {
-        audio.currentTime = 19;
-      });
-  
+
+      // Try to seek when metadata is loaded
+      const handleLoadedMetadata = () => {
+        if (!hasStartedRef.current) {
+          audio.currentTime = START_TIME;
+        }
+      };
+
+      // Also try when enough data is buffered to play
+      const handleCanPlay = () => {
+        if (!hasStartedRef.current && audio.currentTime < START_TIME) {
+          audio.currentTime = START_TIME;
+        }
+      };
+
+      audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.addEventListener("canplay", handleCanPlay);
       audio.addEventListener("play", () => setIsPlaying(true));
       audio.addEventListener("pause", () => setIsPlaying(false));
+      
+      // Start loading immediately
+      audio.load();
     }
-    
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -46,12 +64,18 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (audioRef.current) {
       const audio = audioRef.current;
       
-      // Ensure we start at 19 seconds if at the beginning
-      if (audio.currentTime < 19) {
-        audio.currentTime = 19;
+      // Mark that playback has started
+      hasStartedRef.current = true;
+      
+      // Force seek if we're before the start time
+      if (audio.currentTime < START_TIME) {
+        audio.currentTime = START_TIME;
       }
       
-      audio.play().catch(console.error);
+      // Use a small timeout to ensure seek takes effect
+      setTimeout(() => {
+        audio.play().catch(console.error);
+      }, 50);
     }
   }, []);
 
@@ -64,12 +88,10 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const toggleMute = useCallback(() => {
     if (audioRef.current) {
       if (isMuted) {
-        // Unmute and resume playing
         audioRef.current.muted = false;
         audioRef.current.play().catch(console.error);
         setIsMuted(false);
       } else {
-        // Mute and pause
         audioRef.current.muted = true;
         audioRef.current.pause();
         setIsMuted(true);
@@ -91,4 +113,3 @@ export function useAudio() {
   }
   return context;
 }
-
