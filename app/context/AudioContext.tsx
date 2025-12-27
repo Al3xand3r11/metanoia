@@ -21,7 +21,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   // Initialize audio element
   useEffect(() => {
     if (!audioRef.current) {
-      const audio = new Audio("/Metanoia - Cleo+ (master 2.0).m4a");
+      const audio = new Audio("/metanoia-cleo-master.m4a");
       audio.loop = true;
       audio.currentTime = 18; // Start at 18 seconds
       audioRef.current = audio;
