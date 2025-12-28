@@ -21,10 +21,15 @@ export default function Submit() {
 
   // Form state
   const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
+  const [wantsUpdates, setWantsUpdates] = useState(false);
 
   const MAX_MESSAGE_LENGTH = 500;
 
@@ -57,8 +62,27 @@ export default function Submit() {
     e.preventDefault();
     setError("");
 
+    // Honeypot check - if filled, silently reject (bot detected)
+    if (honeypot) {
+      // Pretend success to not alert bot
+      setIsSubmitted(true);
+      return;
+    }
+
     if (!name.trim()) {
       setError("Please enter your name");
+      return;
+    }
+
+    if (!phoneNumber.trim()) {
+      setError("Please enter your phone number");
+      return;
+    }
+
+    // E.164 format validation (e.g., +15551234567)
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(phoneNumber.trim())) {
+      setError("Please enter phone number in format: +15551234567");
       return;
     }
 
@@ -72,6 +96,11 @@ export default function Submit() {
       return;
     }
 
+    if (!privacyAccepted) {
+      setError("Please accept the privacy policy");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -80,7 +109,13 @@ export default function Submit() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: name.trim(), message: message.trim() }),
+        body: JSON.stringify({ 
+          name: name.trim(), 
+          phoneNumber: phoneNumber.trim(),
+          message: message.trim(),
+          website: honeypot, // Include honeypot for server-side check
+          wantsUpdates: wantsUpdates
+        }),
       });
 
       if (!response.ok) {
@@ -254,14 +289,35 @@ export default function Submit() {
               style={{
                 fontFamily: "var(--font-saira-condensed)",
                 fontSize: "1.75rem",
-                textShadow: "0 4px 30px rgba(0, 0, 0, 0.6)",
+                textShadow: `
+                  0 0 8px #fff,
+                  0 0 15px #fff,
+                  0 0 30px #fff,
+                  0 0 60px #fff,
+                  0 0 100px rgba(255,255,255,0.9),
+                  0 0 150px rgba(255,255,255,0.7),
+                  0 0 200px rgba(255,255,255,0.5)
+                `,
                 letterSpacing: "0.1em",
+                animation: "neon-pulsate 2s ease-in-out infinite",
               }}
             >
               Share Your Moment
             </h1>
 
             <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
+              {/* Honeypot field - hidden from users */}
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
+
               {/* Name Input */}
               <div>
                 <input
@@ -269,6 +325,18 @@ export default function Submit() {
                   placeholder="Your Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors text-sm"
+                  style={{ fontFamily: "var(--font-helvetica-neue)" }}
+                />
+              </div>
+
+              {/* Phone Number Input */}
+              <div>
+                <input
+                  type="tel"
+                  placeholder="Phone Number (+15551234567)"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors text-sm"
                   style={{ fontFamily: "var(--font-helvetica-neue)" }}
                 />
@@ -296,6 +364,54 @@ export default function Submit() {
                     {message.length}/{MAX_MESSAGE_LENGTH}
                   </span>
                 </div>
+              </div>
+
+              {/* Privacy Policy Checkbox */}
+              <div className="relative">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={privacyAccepted}
+                      onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                      disabled={!hasReadPrivacy}
+                      className="w-5 h-5 bg-black/40 border border-white/20 rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 checked:bg-[#FF1D9D] checked:border-[#FF1D9D] transition-colors"
+                    />
+                    {!hasReadPrivacy && (
+                      <div className="absolute -top-8 left-0 bg-black/90 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        Must read the privacy policy
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-white/80 text-xs leading-tight" style={{ fontFamily: "var(--font-helvetica-neue)" }}>
+                    I have read and accept the{" "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setHasReadPrivacy(true)}
+                      className="text-[#FF1D9D] hover:underline"
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    regarding the use of my phone number
+                  </span>
+                </label>
+              </div>
+
+              {/* Updates Opt-in Checkbox */}
+              <div className="relative">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={wantsUpdates}
+                    onChange={(e) => setWantsUpdates(e.target.checked)}
+                    className="w-5 h-5 bg-black/60 border border-white/20 rounded cursor-pointer checked:bg-[#FF1D9D] checked:border-[#FF1D9D] transition-colors"
+                  />
+                  <span className="text-white/80 text-xs leading-tight" style={{ fontFamily: "var(--font-helvetica-neue)" }}>
+                    I want to receive future updates from CLEO+
+                  </span>
+                </label>
               </div>
 
               {/* Error Message */}
@@ -431,14 +547,35 @@ export default function Submit() {
               style={{
                 fontFamily: "var(--font-saira-condensed)",
                 fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
-                textShadow: "0 4px 30px rgba(0, 0, 0, 0.4)",
-                letterSpacing: "0.1em",
+                textShadow: `
+                  0 0 8px #fff,
+                  0 0 15px #fff,
+                  0 0 30px #fff,
+                  0 0 60px #fff,
+                  0 0 100px rgba(255,255,255,0.9),
+                  0 0 150px rgba(255,255,255,0.7),
+                  0 0 200px rgba(255,255,255,0.5)
+                `,
+                letterSpacing: "0.05em",
+                animation: "neon-pulsate 2s ease-in-out infinite",
               }}
             >
-              Share Your Moment
+              Share Your Moment of Metanoia
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Honeypot field - hidden from users */}
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
+
               {/* Name Input */}
               <div>
                 <input
@@ -451,10 +588,22 @@ export default function Submit() {
                 />
               </div>
 
+              {/* Phone Number Input */}
+              <div>
+                <input
+                  type="tel"
+                  placeholder="Phone Number (ex. 5551234567)"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors"
+                  style={{ fontFamily: "var(--font-helvetica-neue)" }}
+                />
+              </div>
+
               {/* Message Input */}
               <div>
                 <textarea
-                  placeholder="Your Metanoia Moment..."
+                  placeholder="Moment of Metanoia..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
                   rows={6}
@@ -473,6 +622,54 @@ export default function Submit() {
                     {message.length}/{MAX_MESSAGE_LENGTH}
                   </span>
                 </div>
+              </div>
+
+              {/* Privacy Policy Checkbox */}
+              <div className="relative">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={privacyAccepted}
+                      onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                      disabled={!hasReadPrivacy}
+                      className="w-5 h-5 bg-white/5 border border-white/20 rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 checked:bg-[#FF1D9D] checked:border-[#FF1D9D] transition-colors"
+                    />
+                    {!hasReadPrivacy && (
+                      <div className="absolute -top-10 left-0 bg-black/90 text-white text-xs px-3 py-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Must read the privacy policy
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-white/80 text-sm leading-tight" style={{ fontFamily: "var(--font-helvetica-neue)" }}>
+                    I have read and accept the{" "}
+                    <a
+                      href="/webprivacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setHasReadPrivacy(true)}
+                      className="text-[#FF1D9D] hover:underline"
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    regarding the use of my phone number
+                  </span>
+                </label>
+              </div>
+
+              {/* Updates Opt-in Checkbox */}
+              <div className="relative">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={wantsUpdates}
+                    onChange={(e) => setWantsUpdates(e.target.checked)}
+                    className="w-5 h-5 bg-white/10 border border-white/20 rounded cursor-pointer checked:bg-[#FF1D9D] checked:border-[#FF1D9D] transition-colors"
+                  />
+                  <span className="text-white/80 text-sm leading-tight" style={{ fontFamily: "var(--font-helvetica-neue)" }}>
+                    I want to receive future updates from CLEO+
+                  </span>
+                </label>
               </div>
 
               {/* Error Message */}
