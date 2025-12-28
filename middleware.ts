@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 
-export function middleware(request: NextRequest) {
+// Use Web Crypto API for Edge Runtime compatibility
+async function sha256(message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Protect dashboard route
@@ -9,15 +17,13 @@ export function middleware(request: NextRequest) {
     const sessionToken = request.cookies.get("dashboard_session")?.value;
     const storedHash = request.cookies.get("dashboard_session_hash")?.value;
 
-    // No valid session - redirect to login
+    // No valid session - let the page handle showing the login form
     if (!sessionToken || !storedHash) {
-      // Return the dashboard page which will show the login form
-      // We don't redirect to /login since the dashboard has its own password gate
       return NextResponse.next();
     }
 
     // Verify the session token matches the stored hash
-    const tokenHash = crypto.createHash("sha256").update(sessionToken).digest("hex");
+    const tokenHash = await sha256(sessionToken);
     
     if (tokenHash !== storedHash) {
       // Invalid session - clear cookies and show login
