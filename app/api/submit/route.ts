@@ -59,11 +59,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // E.164 format validation (e.g., +15551234567)
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
-    if (!phoneRegex.test(phoneNumber.trim())) {
+    // Normalize phone number to E.164 format
+    // Accept: +15551234567, 15551234567, 5551234567, 555-123-4567, (555) 123-4567, etc.
+    const digitsOnly = phoneNumber.trim().replace(/\D/g, '');
+    let normalizedPhone: string;
+    
+    if (digitsOnly.length === 10) {
+      // 10-digit US number - add +1
+      normalizedPhone = `+1${digitsOnly}`;
+    } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
+      // 11-digit with country code - add +
+      normalizedPhone = `+${digitsOnly}`;
+    } else {
       return NextResponse.json(
-        { error: "Phone number must be in E.164 format (e.g., +15551234567)" },
+        { error: "Please enter a valid 10-digit phone number" },
         { status: 400 }
       );
     }
@@ -106,7 +115,7 @@ export async function POST(request: NextRequest) {
     // Hash the full E.164 format including the + sign to ensure consistency
     const phoneHash = crypto
       .createHash("sha256")
-      .update(phoneNumber.trim())
+      .update(normalizedPhone)
       .digest("hex")
       .slice(0, 16);
 

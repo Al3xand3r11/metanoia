@@ -79,10 +79,16 @@ export default function Submit() {
       return;
     }
 
-    // E.164 format validation (e.g., +15551234567)
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
-    if (!phoneRegex.test(phoneNumber.trim())) {
-      setError("Please enter phone number in format: +15551234567");
+    // Strip all non-digit characters for validation
+    const digitsOnly = phoneNumber.trim().replace(/\D/g, '');
+    
+    // Accept 10-digit US numbers or 11-digit with leading 1
+    if (digitsOnly.length === 10) {
+      // Valid 10-digit number
+    } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
+      // Valid 11-digit with country code
+    } else {
+      setError("Please enter a valid 10-digit phone number");
       return;
     }
 
@@ -103,6 +109,10 @@ export default function Submit() {
 
     setIsSubmitting(true);
 
+    // Normalize phone to E.164 format
+    const phoneDigits = phoneNumber.trim().replace(/\D/g, '');
+    const normalizedPhone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
+
     try {
       const response = await fetch("/api/submit", {
         method: "POST",
@@ -111,7 +121,7 @@ export default function Submit() {
         },
         body: JSON.stringify({ 
           name: name.trim(), 
-          phoneNumber: phoneNumber.trim(),
+          phoneNumber: normalizedPhone,
           message: message.trim(),
           website: honeypot, // Include honeypot for server-side check
           wantsUpdates: wantsUpdates
@@ -334,7 +344,7 @@ export default function Submit() {
               <div>
                 <input
                   type="tel"
-                  placeholder="Phone Number (+15551234567)"
+                  placeholder="Phone Number (555-123-4567)"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors text-sm"
@@ -592,7 +602,7 @@ export default function Submit() {
               <div>
                 <input
                   type="tel"
-                  placeholder="Phone Number (ex. 5551234567)"
+                  placeholder="Phone Number (555-123-4567)"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   className="w-full px-5 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors"
