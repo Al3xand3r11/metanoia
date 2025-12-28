@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { Message, NewMessage } from "@/lib/types";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { sanitizeUserInput, sanitizeName } from "@/lib/sanitize";
 
 // Create a rate limiter that allows 3 submissions per hour
 const ratelimit = new Ratelimit({
@@ -82,6 +83,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize user input to prevent XSS attacks
+    const sanitizedName = sanitizeName(name);
+    const sanitizedMessage = sanitizeUserInput(message, 500);
+
+    // Validate sanitized content isn't empty
+    if (!sanitizedName) {
+      return NextResponse.json(
+        { error: "Name contains invalid characters" },
+        { status: 400 }
+      );
+    }
+
+    if (!sanitizedMessage) {
+      return NextResponse.json(
+        { error: "Message contains invalid content" },
+        { status: 400 }
+      );
+    }
+
     // Create a hash from the phone number for privacy (matches Twilio webhook format)
     // Hash the full E.164 format including the + sign to ensure consistency
     const phoneHash = crypto
@@ -95,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     const newMessage: NewMessage = {
       phone_hash: phoneHash,
-      content: message.trim(),
+      content: sanitizedMessage, // Use sanitized content
       status: "pending",
     };
 

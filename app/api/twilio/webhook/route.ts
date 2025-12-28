@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
 import { NewMessage } from "@/lib/types";
+import { sanitizeUserInput } from "@/lib/sanitize";
 
 // Twilio sends form-urlencoded data
 export async function POST(request: NextRequest) {
@@ -25,6 +26,21 @@ export async function POST(request: NextRequest) {
     //   return new NextResponse("Unauthorized", { status: 401 });
     // }
 
+    // Sanitize the message content to prevent XSS attacks
+    const sanitizedContent = sanitizeUserInput(body, 500);
+
+    // Reject empty messages after sanitization
+    if (!sanitizedContent) {
+      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Message>Sorry, your message couldn't be processed. Please try again with different content.</Message>
+</Response>`;
+      return new NextResponse(twiml, {
+        status: 200,
+        headers: { "Content-Type": "text/xml" },
+      });
+    }
+
     // Hash the phone number for privacy (never store raw phone numbers)
     const phoneHash = hashPhoneNumber(from);
 
@@ -33,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     const newMessage: NewMessage = {
         phone_hash: phoneHash,
-        content: body.trim(),
+        content: sanitizedContent, // Use sanitized content
         status: "pending",
       };  
 
