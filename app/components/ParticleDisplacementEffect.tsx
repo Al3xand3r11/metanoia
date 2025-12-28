@@ -35,8 +35,8 @@ export default function ParticleDisplacementEffect({
   const imageLoadedRef = useRef(false);
   
   // Track if we should render the particle effect or just a static image
-  const [isMobile, setIsMobile] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
+  // Default to true (assume desktop) to avoid flash of wrong content
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   // Check for mobile on mount and resize
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function ParticleDisplacementEffect({
     
     // Check immediately
     checkMobile();
-    setIsInitialized(true);
     
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -140,7 +139,11 @@ export default function ParticleDisplacementEffect({
     imageLoadedRef.current = true;
   }, [particleSize, applyDuotone]);
 
+  // Particle effect - only runs on desktop
   useEffect(() => {
+    // Wait until we know if we're on mobile
+    if (isMobile === null) return;
+    
     // Don't run particle effect on mobile - too heavy
     if (isMobile) return;
     
@@ -292,9 +295,11 @@ export default function ParticleDisplacementEffect({
     };
   }, [imageSrc, initParticles, isMobile]);
 
-  // Don't render anything until we know if we're on mobile
-  if (!isInitialized) {
-    return null;
+  // Still determining if mobile - show nothing briefly to avoid flash
+  if (isMobile === null) {
+    return (
+      <div className="absolute inset-0 bg-[#C8A0B8]" />
+    );
   }
 
   // On mobile, render a static image instead of the particle effect

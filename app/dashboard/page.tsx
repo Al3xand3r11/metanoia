@@ -29,8 +29,8 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
       });
 
       if (response.ok) {
-        onSuccess();
-      } else {
+      onSuccess();
+    } else {
         setError(true);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 500);
@@ -286,13 +286,13 @@ export default function Dashboard() {
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <Link
-                href="/messages"
-                className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors"
-                style={{ fontFamily: "var(--font-saira)" }}
-              >
-                View Public Page →
-              </Link>
+            <Link
+              href="/messages"
+              className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors"
+              style={{ fontFamily: "var(--font-saira)" }}
+            >
+              View Public Page →
+            </Link>
               <button
                 onClick={handleLogout}
                 className="p-2 text-zinc-500 hover:text-white transition-colors"
