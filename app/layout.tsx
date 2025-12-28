@@ -1,108 +1,45 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Saira_Condensed, Saira } from "next/font/google";
+import { Geist_Mono, Saira_Condensed, Saira } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AudioProvider } from "./context/AudioContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+// Geist Mono - used for code/monospace text (STOP, HELP keywords)
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+// Saira Condensed - used for headings with font-black, font-bold, font-medium
+// Only load the weights actually used in the codebase
 const sairaCondensed = Saira_Condensed({
   variable: "--font-saira-condensed",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "500", "600", "700", "900"], // light, medium, semibold, bold, black
 });
 
+// Saira - used for dashboard UI text
+// Only load the weights actually used
 const saira = Saira({
   variable: "--font-saira",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"], // normal, medium, semibold, bold
 });
 
+// Helvetica Neue - used for body text
+// Only load the weights actually used (light and normal - no italics needed)
 const helveticaNeue = localFont({
   variable: "--font-helvetica-neue",
   src: [
-    {
-      path: "../public/fonts/HelveticaNeueUltraLight.woff2",
-      weight: "100",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueUltraLightItalic.woff2",
-      weight: "100",
-      style: "italic",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueThin.woff2",
-      weight: "200",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueThinItalic.woff2",
-      weight: "200",
-      style: "italic",
-    },
     {
       path: "../public/fonts/HelveticaNeueLight.woff2",
       weight: "300",
       style: "normal",
     },
     {
-      path: "../public/fonts/HelveticaNeueLightItalic.woff2",
-      weight: "300",
-      style: "italic",
-    },
-    {
       path: "../public/fonts/HelveticaNeueRoman.woff2",
       weight: "400",
       style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueMedium.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueMediumItalic.woff2",
-      weight: "500",
-      style: "italic",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueBold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueBoldItalic.woff2",
-      weight: "700",
-      style: "italic",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueHeavy.woff2",
-      weight: "800",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueHeavyItalic.woff2",
-      weight: "800",
-      style: "italic",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueBlack.woff2",
-      weight: "900",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/HelveticaNeueBlackItalic.woff2",
-      weight: "900",
-      style: "italic",
     },
   ],
 });
@@ -125,7 +62,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${sairaCondensed.variable} ${saira.variable} ${helveticaNeue.variable} antialiased`}
+        className={`${sairaCondensed.variable} ${saira.variable} ${helveticaNeue.variable} ${geistMono.variable} antialiased`}
       >
         <AudioProvider>{children}</AudioProvider>
       </body>

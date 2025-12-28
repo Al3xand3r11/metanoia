@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
+import Image from "next/image";
 
 interface Particle {
   x: number;
@@ -18,6 +19,9 @@ interface ParticleDisplacementEffectProps {
   particleSize?: number;
 }
 
+// Mobile breakpoint - matches Tailwind's md
+const MOBILE_BREAKPOINT = 768;
+
 export default function ParticleDisplacementEffect({
   imageSrc,
   particleSize = 4,
@@ -29,6 +33,24 @@ export default function ParticleDisplacementEffect({
   const prevMouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>(0);
   const imageLoadedRef = useRef(false);
+  
+  // Track if we should render the particle effect or just a static image
+  const [isMobile, setIsMobile] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Check for mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+    
+    // Check immediately
+    checkMobile();
+    setIsInitialized(true);
+    
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Duotone color mapping - Steel blue shadows → Hot pink highlights (matching screenshot)
   const applyDuotone = useCallback((r: number, g: number, b: number): string => {
@@ -119,12 +141,20 @@ export default function ParticleDisplacementEffect({
   }, [particleSize, applyDuotone]);
 
   useEffect(() => {
+    // Don't run particle effect on mobile - too heavy
+    if (isMobile) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     let destroyed = false;
 
     const resize = () => {
+      // Check mobile again on resize
+      if (window.innerWidth < MOBILE_BREAKPOINT) {
+        return; // Don't initialize particles on mobile
+      }
+      
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       
@@ -260,8 +290,30 @@ export default function ParticleDisplacementEffect({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [imageSrc, initParticles]);
+  }, [imageSrc, initParticles, isMobile]);
 
+  // Don't render anything until we know if we're on mobile
+  if (!isInitialized) {
+    return null;
+  }
+
+  // On mobile, render a static image instead of the particle effect
+  if (isMobile) {
+    return (
+      <Image
+        src={imageSrc}
+        alt=""
+        fill
+        className="object-cover"
+        priority
+        style={{
+          filter: "sepia(0.3) saturate(1.2) hue-rotate(-20deg)",
+        }}
+      />
+    );
+  }
+
+  // On desktop, render the canvas for particle effect
   return (
     <canvas
       ref={canvasRef}
