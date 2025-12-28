@@ -87,14 +87,14 @@ export async function PATCH(request: NextRequest) {
 
     const supabase = createAdminClient();
     
-    const updateData: { status: string; approved_at: string | null } = {
+    const updateData = {
       status,
       approved_at: status === "approved" ? new Date().toISOString() : null,
     };
 
     const { data, error } = await supabase
       .from("messages")
-      .update(updateData)
+      .update(updateData as never)
       .eq("id", id)
       .select()
       .single();
