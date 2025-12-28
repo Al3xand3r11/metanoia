@@ -6,24 +6,43 @@ import Image from "next/image";
 import { Message } from "@/lib/types";
 import { mockMessages } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/client";
-import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock, FiUser, FiDatabase } from "react-icons/fi";
-
-const DASHBOARD_PASSWORD = process.env.NEXT_PUBLIC_DASHBOARD_PASSWORD;
+import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock, FiUser, FiDatabase, FiLogOut } from "react-icons/fi";
 
 function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === DASHBOARD_PASSWORD) {
-      onSuccess();
-    } else {
+    setIsLoading(true);
+    setError(false);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        onSuccess();
+      } else {
+        setError(true);
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        setPassword("");
+      }
+    } catch {
       setError(true);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       setPassword("");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,15 +76,17 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
                   setError(false);
                 }}
                 placeholder="Enter password"
+                disabled={isLoading}
                 className={`w-full bg-zinc-900/60 backdrop-blur-sm border ${
                   error ? "border-red-500/50" : "border-zinc-800"
-                } rounded-xl px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all text-center tracking-widest`}
+                } rounded-xl px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all text-center tracking-widest disabled:opacity-50`}
                 style={{ fontFamily: "var(--font-saira)" }}
                 autoFocus
               />
               <button
                 type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-zinc-500 hover:text-white transition-colors"
+                disabled={isLoading}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-zinc-500 hover:text-white transition-colors disabled:opacity-50"
               >
                 <FiLock className="w-4 h-4" />
               </button>
@@ -97,13 +118,40 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 }
 
 export default function Dashboard() {
-  // Password protection state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   // Use state to manage messages (combining mock data and database data)
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("all");
   const [isLoading, setIsLoading] = useState(true);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch("/api/auth/check");
+        const data = await response.json();
+        setIsAuthenticated(data.authenticated);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    }
+    checkAuth();
+  }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   // Fetch messages from Supabase and combine with mock data
   useEffect(() => {
@@ -146,6 +194,17 @@ export default function Dashboard() {
       fetchMessages();
     }
   }, [isAuthenticated]);
+
+  // Show loading while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-zinc-500" style={{ fontFamily: "var(--font-saira)" }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   // Show password gate if not authenticated
   if (!isAuthenticated) {
@@ -226,13 +285,22 @@ export default function Dashboard() {
                 Dashboard
               </h1>
             </div>
-            <Link
-              href="/messages"
-              className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors"
-              style={{ fontFamily: "var(--font-saira)" }}
-            >
-              View Public Page →
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/messages"
+                className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors"
+                style={{ fontFamily: "var(--font-saira)" }}
+              >
+                View Public Page →
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-zinc-500 hover:text-white transition-colors"
+                title="Logout"
+              >
+                <FiLogOut className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
