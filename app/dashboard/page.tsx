@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Message } from "@/lib/types";
 import { mockMessages } from "@/lib/mockData";
-import { createClient } from "@/lib/supabase/client";
 import { FiEye, FiEyeOff, FiTrash2, FiClock, FiCheck, FiLock, FiUser, FiDatabase, FiLogOut } from "react-icons/fi";
 
 function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
@@ -153,35 +152,34 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch messages from Supabase and combine with mock data
+  // Fetch messages from API and combine with mock data
   useEffect(() => {
     async function fetchMessages() {
       try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("messages")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error("Error fetching messages:", error);
+        const response = await fetch("/api/messages");
+        
+        if (!response.ok) {
+          console.error("Error fetching messages:", response.statusText);
           // Fall back to just mock data
           setMessages(mockMessages);
-        } else {
-          // Add source: "user" to database messages and combine with mock data
-          const userMessages: Message[] = (data || []).map((msg: Message) => ({
-            id: msg.id,
-            phone_hash: msg.phone_hash,
-            content: msg.content,
-            status: msg.status,
-            created_at: msg.created_at,
-            approved_at: msg.approved_at,
-            source: "user" as const,
-          }));
-          
-          // Combine: user messages first (newest), then mock data
-          setMessages([...userMessages, ...mockMessages]);
+          return;
         }
+        
+        const { messages: data } = await response.json();
+        
+        // Add source: "user" to database messages and combine with mock data
+        const userMessages: Message[] = (data || []).map((msg: Message) => ({
+          id: msg.id,
+          phone_hash: msg.phone_hash,
+          content: msg.content,
+          status: msg.status,
+          created_at: msg.created_at,
+          approved_at: msg.approved_at,
+          source: "user" as const,
+        }));
+        
+        // Combine: user messages first (newest), then mock data
+        setMessages([...userMessages, ...mockMessages]);
       } catch (err) {
         console.error("Failed to fetch messages:", err);
         setMessages(mockMessages);
@@ -212,11 +210,17 @@ export default function Dashboard() {
   }
 
   // Toggle message visibility
-  const toggleVisibility = (id: string) => {
+  const toggleVisibility = async (id: string, source?: string) => {
+    // Find the current message to determine new status
+    const currentMessage = messages.find((msg) => msg.id === id);
+    if (!currentMessage) return;
+    
+    const newStatus = currentMessage.status === "approved" ? "hidden" : "approved";
+    
+    // Optimistically update the UI
     setMessages((prev) =>
       prev.map((msg) => {
         if (msg.id === id) {
-          const newStatus = msg.status === "approved" ? "hidden" : "approved";
           return {
             ...msg,
             status: newStatus,
@@ -226,6 +230,51 @@ export default function Dashboard() {
         return msg;
       })
     );
+    
+    // Only persist to database if it's a user message (not mock data)
+    if (source === "user") {
+      try {
+        const response = await fetch("/api/messages", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id, status: newStatus }),
+        });
+        
+        if (!response.ok) {
+          console.error("Failed to update message status");
+          // Revert on failure
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.id === id) {
+                return {
+                  ...msg,
+                  status: currentMessage.status,
+                  approved_at: currentMessage.approved_at,
+                };
+              }
+              return msg;
+            })
+          );
+        }
+      } catch (err) {
+        console.error("Failed to update message:", err);
+        // Revert on error
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg.id === id) {
+              return {
+                ...msg,
+                status: currentMessage.status,
+                approved_at: currentMessage.approved_at,
+              };
+            }
+            return msg;
+          })
+        );
+      }
+    }
   };
 
   // Filter messages based on selected filter
@@ -412,7 +461,7 @@ export default function Dashboard() {
                   <div className="col-span-2 flex items-center justify-center gap-2">
                     {/* Toggle Visibility Button */}
                     <button
-                      onClick={() => toggleVisibility(message.id)}
+                      onClick={() => toggleVisibility(message.id, message.source)}
                       className={`p-2.5 rounded-lg transition-all ${
                         message.status === "approved"
                           ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"

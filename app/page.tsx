@@ -76,8 +76,16 @@ export default function Home() {
   // Reset video when activeVideo changes
   useEffect(() => {
     if (videoRef.current && isMobile) {
-      videoRef.current.load();
-      videoRef.current.play();
+      const video = videoRef.current;
+      video.load();
+      // Force play with promise handling for mobile browsers
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented, try again after user interaction
+          // Most browsers allow muted autoplay, so this rarely triggers
+        });
+      }
     }
   }, [activeVideo, isMobile]);
 
@@ -97,9 +105,16 @@ export default function Home() {
             autoPlay
             muted
             playsInline
+            controls={false}
+            preload="auto"
             onEnded={handleVideoEnded}
+            onCanPlay={(e) => {
+              const video = e.currentTarget;
+              video.play().catch(() => {});
+            }}
           >
             <source src={mobileVideos[activeVideo]} type="video/quicktime" />
+            <source src={mobileVideos[activeVideo].replace('.mov', '.mp4')} type="video/mp4" />
           </video>
           
           {/* Dark overlay for better text visibility */}

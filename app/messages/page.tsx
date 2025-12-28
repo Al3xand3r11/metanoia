@@ -336,10 +336,8 @@ export default function Messages() {
           className="text-white text-[8px] md:text-base uppercase tracking-wide md:tracking-widest text-center whitespace-nowrap"
           style={{ fontFamily: "var(--font-helvetica-neue)" }}
         >
-          text Start to {" "}
-          <span style={{ color: "#FF1D9D" }}>8448716554</span>
-          {" "}to submit your moment of{" "}
-          <span style={{ color: "#FF1D9D" }}>metanoia</span>
+          Submit your moment of metanoia{" "}
+          <Link href="/submit" style={{ color: "#FF1D9D", textShadow: "0 0 8px #FF1D9D, 0 0 16px #FF1D9D, 0 0 24px #FF1D9D" }}>here</Link>
         </p>
       </div>
     </div>
