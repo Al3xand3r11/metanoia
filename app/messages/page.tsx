@@ -331,14 +331,19 @@ export default function Messages() {
       <div className="fixed top-0 bottom-0 right-0 w-12 md:w-24 bg-gradient-to-l from-black to-transparent pointer-events-none z-40" />
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center px-4 md:px-8 py-4 md:py-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-        <p
-          className="text-white text-[8px] md:text-base uppercase tracking-wide md:tracking-widest text-center whitespace-nowrap"
-          style={{ fontFamily: "var(--font-helvetica-neue)" }}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center px-4 md:px-8 py-4 md:py-8 bg-gradient-to-t from-black via-black/80 to-transparent">
+        <Link
+          href="/submit"
+          className="px-6 py-3 md:px-10 md:py-4 text-white uppercase tracking-widest text-[10px] md:text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            fontFamily: "var(--font-helvetica-neue)",
+            background: "linear-gradient(135deg, #FF1D9D 0%, #FF1D9D 100%)",
+            borderRadius: "8px",
+            boxShadow: "0 0 15px rgba(255, 29, 157, 0.5), 0 0 30px rgba(255, 29, 157, 0.3), 0 0 45px rgba(255, 29, 157, 0.2), 0 4px 20px rgba(255, 29, 157, 0.4)",
+          }}
         >
-          Submit your moment of metanoia{" "}
-          <Link href="/submit" style={{ color: "#FF1D9D", textShadow: "0 0 8px #FF1D9D, 0 0 16px #FF1D9D, 0 0 24px #FF1D9D" }}>here</Link>
-        </p>
+          Submit Your Moment of Metanoia
+        </Link>
       </div>
     </div>
   );
