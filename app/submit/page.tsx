@@ -396,7 +396,7 @@ export default function Submit() {
                   <span className="text-white/80 text-xs leading-tight" style={{ fontFamily: "var(--font-helvetica-neue)" }}>
                     I have read and accept the{" "}
                     <a
-                      href="/privacy"
+                      href="/webprivacy"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setHasReadPrivacy(true)}

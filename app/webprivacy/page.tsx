@@ -288,9 +288,6 @@ export default function WebPrivacyPolicyPage() {
                 <p className="mb-2">
                   <strong className="text-white">Cleo+</strong>
                 </p>
-                <p>1331 N Cahuenga Blvd</p>
-                <p>Los Angeles, CA 90028</p>
-                <p>United States</p>
                 <p className="mt-4">
                   Email:{" "}
                   <a
