@@ -332,7 +332,7 @@ export default function Submit() {
               <div>
                 <input
                   type="text"
-                  placeholder="Your Name"
+                  placeholder="Your Name (Message will be anonymous)"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#FF1D9D] transition-colors text-sm"
