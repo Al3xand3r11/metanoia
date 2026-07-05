@@ -21,7 +21,7 @@ export default function DesktopHome() {
 
       {/* Particle Displacement Effect - Interactive background */}
       <div className="absolute inset-0">
-        <ParticleDisplacementEffect imageSrc="/Mia3.webp" particleSize={4} />
+        <ParticleDisplacementEffect imageSrc="/cleopaint.webp" particleSize={4} />
 
         {/* Halftone/Scanline Texture Overlay */}
         <div
