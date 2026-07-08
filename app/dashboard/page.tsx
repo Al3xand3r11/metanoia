@@ -336,7 +336,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-4">
             <Link
-              href="/messages"
+              href="/youtube"
               className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors"
               style={{ fontFamily: "var(--font-saira)" }}
             >

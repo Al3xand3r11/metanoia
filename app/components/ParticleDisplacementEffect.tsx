@@ -119,8 +119,9 @@ export default function ParticleDisplacementEffect({
         // Skip fully transparent pixels
         if (a < 10) continue;
 
-        // Apply duotone effect to the color
-        const duotoneColor = applyDuotone(r, g, b);
+        // Duotone temporarily disabled to preview the original background colors
+        // const duotoneColor = applyDuotone(r, g, b);
+        const duotoneColor = `rgb(${r}, ${g}, ${b})`;
 
         particles.push({
           x: x,

@@ -1,18 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import CleoLogo from "@/public/CleoLogo.png";
-import { useState } from "react";
-import { useAudio } from "@/app/context/AudioContext";
+import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import TrailRevealEffect from "@/app/components/TrailRevealEffect";
 import ParticleDisplacementEffect from "@/app/components/ParticleDisplacementEffect";
 import SocialIcons from "./SocialIcons";
-import DefinitionMarquee from "./DefinitionMarquee";
+import { useAudio } from "@/app/context/AudioContext";
 
 export default function DesktopHome() {
-  const [isMetanoiaHovered, setIsMetanoiaHovered] = useState(false);
-  const { play } = useAudio();
+  const { isPlaying, play, pause } = useAudio();
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#C8A0B8]">
@@ -50,60 +45,23 @@ export default function DesktopHome() {
       <div className="relative z-10 flex min-h-screen w-full flex-col">
         {/* Top Navigation */}
         <div className="flex items-center justify-between px-6 py-4 md:px-12 md:py-6">
-          {/* Logo - Left */}
-          <div className="shrink-0">
-            <Image
-              src={CleoLogo}
-              alt="Cleo Logo"
-              width={120}
-              height={60}
-              className="h-auto w-24 md:w-32 lg:w-36"
-            />
-          </div>
+          {/* Sound Toggle - Left */}
+          <button
+            onClick={isPlaying ? pause : play}
+            className="text-white/70 hover:text-white transition-colors p-1 md:p-2"
+            aria-label={isPlaying ? "Pause music" : "Play music"}
+          >
+            {isPlaying ? (
+              <HiSpeakerWave className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
+            ) : (
+              <HiSpeakerXMark className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12" />
+            )}
+          </button>
 
           {/* Social Icons - Right */}
           <SocialIcons
             iconClassName="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12"
             containerClassName="gap-5 md:gap-8"
-          />
-        </div>
-
-        {/* Main Content - METANOIA (Centered) */}
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <Link
-            href="/messages"
-            className="group inline-block cursor-pointer text-center"
-            onClick={play}
-          >
-            {/* METANOIA text */}
-            <h1
-              className="font-black uppercase leading-[0.85] text-[#F5F7FA] transition-all duration-300"
-              style={{
-                fontFamily: "var(--font-saira-condensed)",
-                fontSize: "clamp(3rem, 12vw, 12rem)",
-                textShadow: isMetanoiaHovered
-                  ? "0 0 20px #fff, 0 0 40px #fff, 0 0 80px #fff, 0 0 120px rgba(255,255,255,0.8), 0 0 200px rgba(255,255,255,0.6)"
-                  : "0 4px 30px rgba(0, 0, 0, 0.4)",
-                letterSpacing: "-0.02em",
-              }}
-              onMouseEnter={() => setIsMetanoiaHovered(true)}
-              onMouseLeave={() => setIsMetanoiaHovered(false)}
-            >
-              METANOIA
-            </h1>
-          </Link>
-
-          {/* Definition Text - below METANOIA */}
-          <DefinitionMarquee
-            repeat={6}
-            animationClassName="animate-marquee-desktop"
-            containerStyle={{ marginTop: "-2vw" }}
-            textClassName="mx-4 font-black uppercase leading-none text-[#111827]"
-            textStyle={{
-              fontFamily: "var(--font-saira-condensed)",
-              fontSize: "clamp(0.875rem, 2vw, 2rem)",
-              letterSpacing: "-0.02em",
-            }}
           />
         </div>
       </div>

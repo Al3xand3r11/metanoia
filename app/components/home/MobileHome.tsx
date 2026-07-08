@@ -117,7 +117,7 @@ export default function MobileHome() {
         {/* Enter Button - Centered */}
         <div className="flex flex-1 flex-col items-center justify-center">
           <Link
-            href="/messages"
+            href="/youtube"
             className="group inline-block cursor-pointer text-center"
             onClick={play}
           >
