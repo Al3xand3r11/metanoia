@@ -1,6 +1,9 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
+import CleoLogo from "@/public/CleoLogo.png";
 import TrailRevealEffect from "@/app/components/TrailRevealEffect";
 import ParticleDisplacementEffect from "@/app/components/ParticleDisplacementEffect";
 import SocialIcons from "./SocialIcons";
@@ -16,7 +19,7 @@ export default function DesktopHome() {
 
       {/* Particle Displacement Effect - Interactive background */}
       <div className="absolute inset-0">
-        <ParticleDisplacementEffect imageSrc="/cleopaint.webp" particleSize={4} />
+        <ParticleDisplacementEffect imageSrc="/cleoclose.jpeg" particleSize={4} />
 
         {/* Halftone/Scanline Texture Overlay */}
         <div
@@ -63,6 +66,39 @@ export default function DesktopHome() {
             iconClassName="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12"
             containerClassName="gap-5 md:gap-8"
           />
+        </div>
+
+        {/* Cleo+ Logo - Centered, links to the YouTube video */}
+        <div className="flex flex-1 items-center justify-center px-6">
+          <Link
+            href="/youtube"
+            aria-label="Watch on YouTube"
+            className="group relative inline-block"
+          >
+            {/* Soft pink glow layer - pre-rendered, only opacity animates for a smooth hover */}
+            <Image
+              src={CleoLogo}
+              alt=""
+              aria-hidden
+              width={120}
+              height={60}
+              priority
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-200 ease-out will-change-[opacity] group-hover:opacity-90"
+              style={{
+                filter: "blur(30px) drop-shadow(0 0 25px rgba(214, 132, 184, 0.9))",
+                transform: "translateZ(0)",
+              }}
+            />
+            <Image
+              src={CleoLogo}
+              alt="Cleo+"
+              width={120}
+              height={60}
+              priority
+              className="relative h-auto w-[70vw] max-w-3xl transition-transform duration-200 ease-out will-change-transform group-hover:scale-[1.02] md:w-[60vw] lg:w-[55vw]"
+              style={{ transform: "translateZ(0)" }}
+            />
+          </Link>
         </div>
       </div>
     </div>
