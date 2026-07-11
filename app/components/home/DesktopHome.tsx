@@ -1,16 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
-import CleoLogo from "@/public/CleoLogo.png";
+import { HiSpeakerWave, HiSpeakerXMark, HiXMark } from "react-icons/hi2";
+import CleoLogo from "@/public/CleoLogoTrimmed.png";
 import TrailRevealEffect from "@/app/components/TrailRevealEffect";
 import ParticleDisplacementEffect from "@/app/components/ParticleDisplacementEffect";
 import SocialIcons from "./SocialIcons";
 import { useAudio } from "@/app/context/AudioContext";
 
+const YOUTUBE_VIDEO_ID = "7Mx0gYdNmEc";
+
 export default function DesktopHome() {
   const { isPlaying, play, pause } = useAudio();
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  // Close the video modal on Escape and pause background music while it's open.
+  useEffect(() => {
+    if (!isVideoOpen) return;
+
+    pause();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsVideoOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isVideoOpen, pause]);
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#C8A0B8]">
@@ -68,39 +84,83 @@ export default function DesktopHome() {
           />
         </div>
 
-        {/* Cleo+ Logo - Centered, links to the YouTube video */}
-        <div className="flex flex-1 items-center justify-center px-6">
-          <Link
-            href="/youtube"
+        {/* Cleo+ Logo - Pushed to the bottom of the page, opens the YouTube video popup */}
+        <div className="mt-auto flex justify-center px-6 pb-10">
+          <button
+            type="button"
+            onClick={() => setIsVideoOpen(true)}
             aria-label="Watch on YouTube"
-            className="group relative inline-block"
+            className="group relative inline-block cursor-pointer"
           >
-            {/* Soft pink glow layer - pre-rendered, only opacity animates for a smooth hover */}
+            {/* Soft pink glow layer - slowly pulsates in the background pink, stays lit on hover */}
             <Image
               src={CleoLogo}
               alt=""
               aria-hidden
-              width={120}
-              height={60}
+              width={812}
+              height={398}
               priority
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-200 ease-out will-change-[opacity] group-hover:opacity-90"
+              className="animate-logo-glow pointer-events-none absolute inset-0 h-full w-full will-change-[opacity]"
               style={{
-                filter: "blur(30px) drop-shadow(0 0 25px rgba(214, 132, 184, 0.9))",
+                filter: "blur(30px) drop-shadow(0 0 25px rgba(200, 160, 184, 0.9))",
                 transform: "translateZ(0)",
               }}
             />
             <Image
               src={CleoLogo}
               alt="Cleo+"
-              width={120}
-              height={60}
+              width={812}
+              height={398}
               priority
-              className="relative h-auto w-[70vw] max-w-3xl transition-transform duration-200 ease-out will-change-transform group-hover:scale-[1.02] md:w-[60vw] lg:w-[55vw]"
+              className="relative h-auto w-[21vw] max-w-[14.4rem] transition-transform duration-200 ease-out will-change-transform group-hover:scale-[1.02] md:w-[18vw] lg:w-[16.2vw]"
               style={{ transform: "translateZ(0)" }}
             />
-          </Link>
+          </button>
         </div>
       </div>
+
+      {/* YouTube Video Popup */}
+      {isVideoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Cleo+ video"
+        >
+          {/* Darkened, blurred backdrop - click to close */}
+          <div
+            onClick={() => setIsVideoOpen(false)}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
+
+          {/* Modal card */}
+          <div
+            className="relative w-full max-w-4xl rounded-2xl bg-black shadow-2xl"
+            style={{ boxShadow: "0 25px 80px -10px rgba(200, 160, 184, 0.55), 0 0 0 1px rgba(255,255,255,0.06)" }}
+          >
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={() => setIsVideoOpen(false)}
+              aria-label="Close video"
+              className="absolute -right-3 -top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow-lg transition-transform hover:scale-110"
+            >
+              <HiXMark className="h-5 w-5" />
+            </button>
+
+            {/* 16:9 video ready to play */}
+            <div className="aspect-video w-full overflow-hidden rounded-2xl">
+              <iframe
+                className="h-full w-full"
+                src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
