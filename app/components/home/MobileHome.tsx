@@ -1,17 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import CleoLogo from "@/public/CleoLogo.png";
-import { useEffect, useRef } from "react";
-import { useAudio } from "@/app/context/AudioContext";
+import { useEffect, useRef, useState } from "react";
+import { HiSpeakerWave, HiSpeakerXMark, HiXMark } from "react-icons/hi2";
+import CleoLogo from "@/public/CleoLogoTrimmed.png";
 import SocialIcons from "./SocialIcons";
+
+const YOUTUBE_VIDEO_ID = "7Mx0gYdNmEc";
 
 export default function MobileHome() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
-  const { play } = useAudio();
+  const [isMuted, setIsMuted] = useState(true);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   // Smooth progress bar update using requestAnimationFrame
   useEffect(() => {
@@ -34,6 +36,36 @@ export default function MobileHome() {
     };
   }, []);
 
+  // Keep the video element's muted property in sync with state
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
+  // Pause the background video while the YouTube overlay is open, resume on close
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (isVideoOpen) {
+      video.pause();
+    } else {
+      video.play().catch(() => {});
+    }
+  }, [isVideoOpen]);
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const next = !isMuted;
+    video.muted = next;
+    setIsMuted(next);
+    if (!next) {
+      // Unmuting counts as a user gesture, so (re)start playback with sound
+      video.play().catch(() => {});
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-black">
       {/* Video Background */}
@@ -52,8 +84,8 @@ export default function MobileHome() {
             video.play().catch(() => {});
           }}
         >
-          <source src="/newcleo.mov" type="video/quicktime" />
           <source src="/newcleo.mp4" type="video/mp4" />
+          <source src="/newcleo.mov" type="video/quicktime" />
         </video>
 
         {/* Dark overlay for better text visibility */}
@@ -77,26 +109,58 @@ export default function MobileHome() {
 
       {/* Content Container */}
       <div className="relative z-10 flex min-h-screen w-full flex-col">
-        {/* Social Icons - Top Center */}
-        <SocialIcons
-          iconClassName="h-8 w-8"
-          containerClassName="justify-center gap-6 px-6 py-8"
-        />
+        {/* Top Bar */}
+        <div className="flex items-center justify-between px-6 py-6">
+          {/* Sound Toggle - mutes/unmutes the background video */}
+          <button
+            onClick={toggleMute}
+            className="text-white/70 transition-colors hover:text-white"
+            aria-label={isMuted ? "Unmute video" : "Mute video"}
+          >
+            {isMuted ? (
+              <HiSpeakerXMark className="h-8 w-8" />
+            ) : (
+              <HiSpeakerWave className="h-8 w-8" />
+            )}
+          </button>
+
+          {/* Social Icons - Right */}
+          <SocialIcons iconClassName="h-8 w-8" containerClassName="justify-end gap-5" />
+        </div>
 
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Cleo+ Logo - links to the YouTube video */}
+        {/* Cleo+ Logo - opens the YouTube video overlay */}
         <div className="flex justify-center pb-4">
-          <Link href="/youtube" aria-label="Watch on YouTube" onClick={play}>
+          <button
+            type="button"
+            onClick={() => setIsVideoOpen(true)}
+            aria-label="Watch on YouTube"
+            className="group relative inline-block"
+          >
+            {/* Soft pink glow layer - slowly pulsates in the brand pink */}
+            <Image
+              src={CleoLogo}
+              alt=""
+              aria-hidden
+              width={812}
+              height={398}
+              className="animate-logo-glow pointer-events-none absolute inset-0 h-full w-full will-change-[opacity]"
+              style={{
+                filter: "blur(22px) drop-shadow(0 0 18px rgba(200, 160, 184, 0.9))",
+                transform: "translateZ(0)",
+              }}
+            />
             <Image
               src={CleoLogo}
               alt="Cleo+"
-              width={100}
-              height={50}
-              className="h-auto w-36 opacity-90"
+              width={812}
+              height={398}
+              className="relative h-auto w-36 opacity-90"
+              style={{ transform: "translateZ(0)" }}
             />
-          </Link>
+          </button>
         </div>
 
         {/* Video progress timeline */}
@@ -111,6 +175,37 @@ export default function MobileHome() {
           </div>
         </div>
       </div>
+
+      {/* Full-screen YouTube overlay */}
+      {isVideoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Cleo+ video"
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setIsVideoOpen(false)}
+            aria-label="Close video"
+            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-black shadow-lg transition-transform active:scale-95"
+          >
+            <HiXMark className="h-6 w-6" />
+          </button>
+
+          {/* 16:9 player, autoplays with sound (opened via user tap) */}
+          <div className="aspect-video w-full">
+            <iframe
+              className="h-full w-full"
+              src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&playsinline=1`}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
