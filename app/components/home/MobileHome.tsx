@@ -85,7 +85,6 @@ export default function MobileHome() {
           }}
         >
           <source src="/newcleo.mp4" type="video/mp4" />
-          <source src="/newcleo.mov" type="video/quicktime" />
         </video>
 
         {/* Dark overlay for better text visibility */}

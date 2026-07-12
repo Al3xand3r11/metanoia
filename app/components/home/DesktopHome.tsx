@@ -35,7 +35,7 @@ export default function DesktopHome() {
 
       {/* Particle Displacement Effect - Interactive background */}
       <div className="absolute inset-0">
-        <ParticleDisplacementEffect imageSrc="/cleoclose.jpeg" particleSize={4} />
+        <ParticleDisplacementEffect imageSrc="/cleoclose.webp" particleSize={4} />
 
         {/* Halftone/Scanline Texture Overlay */}
         <div
