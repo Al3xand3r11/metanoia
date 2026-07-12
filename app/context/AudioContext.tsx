@@ -13,7 +13,7 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
-const START_TIME = 19.5;  // Start at 19.5 seconds to avoid initial silence
+const START_TIME = 0;
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -24,7 +24,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   // Initialize audio element
   useEffect(() => {
     if (!audioRef.current) {
-      const audio = new Audio("/metanoia-cleo-master.m4a");
+      const audio = new Audio("/paint-cleo.m4a");
       audio.loop = true;
       audio.preload = "auto"; // Preload the audio file
       audioRef.current = audio;

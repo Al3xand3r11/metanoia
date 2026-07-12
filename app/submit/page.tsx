@@ -225,7 +225,7 @@ export default function Submit() {
               Your metanoia moment has been received. It&apos;s being reviewed and may appear in our gallery soon.
             </p>
             <Link
-              href="/messages"
+              href="/youtube"
               className="inline-block px-8 py-3 text-white uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105"
               style={{
                 fontFamily: "var(--font-helvetica-neue)",
@@ -284,7 +284,7 @@ export default function Submit() {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-6">
             <Link
-              href="/messages"
+              href="/youtube"
               className="text-white/60 hover:text-white transition-colors text-xs uppercase tracking-widest"
               style={{ fontFamily: "var(--font-helvetica-neue)" }}
             >
@@ -531,7 +531,7 @@ export default function Submit() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 md:px-12 md:py-6">
           <Link
-            href="/messages"
+            href="/youtube"
             className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-widest"
             style={{ fontFamily: "var(--font-helvetica-neue)" }}
           >

@@ -84,3 +84,23 @@ body {
 .animate-neon-pulsate {
   animation: neon-pulsate 2s ease-in-out infinite;
 }
+
+/* Slow pink glow pulsate for the Cleo+ logo (matches the #C8A0B8 background) */
+@keyframes logo-glow-pulsate {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-logo-glow {
+  animation: logo-glow-pulsate 4s ease-in-out infinite;
+}
+
+/* Keep the pink highlight lit while hovering */
+.group:hover .animate-logo-glow {
+  animation: none;
+  opacity: 0.9;
+}

@@ -79,7 +79,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-8">
                 <Link
-                  href="/messages"
+                  href="/youtube"
                   className="inline-block px-8 py-3 bg-[#FF1482] text-white font-bold rounded-full hover:bg-[#E01070] transition-colors"
                   style={{ fontFamily: "var(--font-saira-condensed)" }}
                 >
