@@ -9,7 +9,7 @@ import ParticleDisplacementEffect from "@/app/components/ParticleDisplacementEff
 import SocialIcons from "./SocialIcons";
 import { useAudio } from "@/app/context/AudioContext";
 
-const YOUTUBE_VIDEO_ID = "7Mx0gYdNmEc";
+const YOUTUBE_VIDEO_ID = "21s6Z8vOi1U";
 
 export default function DesktopHome() {
   const { isPlaying, play, pause } = useAudio();

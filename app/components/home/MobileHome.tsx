@@ -6,7 +6,7 @@ import { HiSpeakerWave, HiSpeakerXMark, HiXMark } from "react-icons/hi2";
 import CleoLogo from "@/public/CleoLogoTrimmed.png";
 import SocialIcons from "./SocialIcons";
 
-const YOUTUBE_VIDEO_ID = "7Mx0gYdNmEc";
+const YOUTUBE_VIDEO_ID = "21s6Z8vOi1U";
 
 export default function MobileHome() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -110,22 +110,22 @@ export default function MobileHome() {
       {/* Content Container */}
       <div className="relative z-10 flex min-h-screen w-full flex-col">
         {/* Top Bar */}
-        <div className="flex items-center justify-between px-6 py-6">
+        <div className="relative flex items-center justify-center px-6 py-6">
           {/* Sound Toggle - mutes/unmutes the background video */}
           <button
             onClick={toggleMute}
-            className="text-white/70 transition-colors hover:text-white"
+            className="absolute left-6 text-white/70 transition-colors hover:text-white"
             aria-label={isMuted ? "Unmute video" : "Mute video"}
           >
             {isMuted ? (
-              <HiSpeakerXMark className="h-8 w-8" />
+              <HiSpeakerXMark className="h-6 w-6" />
             ) : (
-              <HiSpeakerWave className="h-8 w-8" />
+              <HiSpeakerWave className="h-6 w-6" />
             )}
           </button>
 
-          {/* Social Icons - Right */}
-          <SocialIcons iconClassName="h-8 w-8" containerClassName="justify-end gap-5" />
+          {/* Social Icons - Center */}
+          <SocialIcons iconClassName="h-8 w-8" containerClassName="justify-center gap-6" />
         </div>
 
         {/* Spacer */}
@@ -157,7 +157,7 @@ export default function MobileHome() {
               alt="Cleo+"
               width={812}
               height={398}
-              className="relative h-auto w-36 opacity-90"
+              className="relative h-auto w-[85px] opacity-90"
               style={{ transform: "translateZ(0)" }}
             />
           </button>

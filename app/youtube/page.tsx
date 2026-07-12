@@ -1,7 +1,7 @@
 "use client";
 
 // Replace with the desired YouTube video ID (the part after "watch?v=").
-const YOUTUBE_VIDEO_ID = "7Mx0gYdNmEc";
+const YOUTUBE_VIDEO_ID = "21s6Z8vOi1U";
 
 export default function YouTube() {
   return (
